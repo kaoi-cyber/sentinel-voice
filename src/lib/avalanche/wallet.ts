@@ -9,7 +9,10 @@ export type Stage = "connecting" | "confirm" | "pending";
 
 type ProviderDetail = { info: { name: string; rdns: string }; provider: EIP1193Provider };
 
-/** Finds the browser wallet, preferring Core when several are installed (EIP-6963). */
+/**
+ * Finds the browser wallet, preferring Core when several are installed.
+ * Checks the EIP-6963 announcements, Core's own `window.avalanche`, then `window.ethereum`.
+ */
 function discoverProvider(): Promise<EIP1193Provider | null> {
   return new Promise((resolve) => {
     const found: ProviderDetail[] = [];
@@ -18,10 +21,27 @@ function discoverProvider(): Promise<EIP1193Provider | null> {
     window.dispatchEvent(new Event("eip6963:requestProvider"));
     setTimeout(() => {
       window.removeEventListener("eip6963:announceProvider", onAnnounce);
-      const core = found.find((p) => /core/i.test(p.info.name) || /core/i.test(p.info.rdns));
-      const injected = (window as unknown as { ethereum?: EIP1193Provider }).ethereum;
-      resolve(core?.provider ?? found[0]?.provider ?? injected ?? null);
-    }, 300);
+      const w = window as unknown as { avalanche?: EIP1193Provider; ethereum?: EIP1193Provider };
+      const core = found.find((p) => /core/i.test(p.info.name) || /core|avax|avalanche/i.test(p.info.rdns));
+      resolve(core?.provider ?? w.avalanche ?? found[0]?.provider ?? w.ethereum ?? null);
+    }, 500);
+  });
+}
+
+/** Names of the wallets this browser exposes — shown when connecting fails. */
+export function detectedWallets(): Promise<string[]> {
+  return new Promise((resolve) => {
+    const names: string[] = [];
+    const onAnnounce = (e: Event) => names.push((e as CustomEvent<ProviderDetail>).detail.info.name);
+    window.addEventListener("eip6963:announceProvider", onAnnounce);
+    window.dispatchEvent(new Event("eip6963:requestProvider"));
+    setTimeout(() => {
+      window.removeEventListener("eip6963:announceProvider", onAnnounce);
+      const w = window as unknown as { avalanche?: unknown; ethereum?: unknown };
+      if (w.avalanche && !names.some((n) => /core/i.test(n))) names.push("window.avalanche");
+      if (w.ethereum && names.length === 0) names.push("window.ethereum");
+      resolve(names);
+    }, 500);
   });
 }
 
@@ -85,7 +105,8 @@ export async function deployRegistry(onStage: (s: Stage) => void) {
 /** Wallet errors in plain language. */
 export function friendlyWalletError(e: unknown): string {
   const msg = e instanceof Error ? `${e.message} ${(e as { details?: string }).details ?? ""}` : String(e);
-  if (msg.includes("NO_WALLET")) return "No wallet found. Install the Core wallet extension (core.app), then refresh this page.";
+  if (msg.includes("NO_WALLET"))
+    return "No wallet found in this browser. Open this page in the browser where your Core extension is installed (Chrome, Edge or Brave) and refresh. The Claude app's built-in browser and Safari can't use wallet extensions.";
   if (/user (rejected|denied|cancel)|rejected the request|4001/i.test(msg)) return "You cancelled the request in your wallet.";
   if (/insufficient funds/i.test(msg)) return "Your wallet doesn't have enough test AVAX. Get some free from the Builder Hub faucet.";
   if (/AlreadyRecorded/.test(msg)) return "This exact report is already recorded on Avalanche.";

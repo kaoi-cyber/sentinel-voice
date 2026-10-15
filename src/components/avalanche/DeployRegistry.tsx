@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { CheckCircle2, Loader2, Rocket } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CheckCircle2, Loader2, Rocket, Wallet } from "lucide-react";
 import { explorers } from "@/lib/avalanche/chain";
 import { useAvalancheConfig } from "@/lib/avalanche/useAvalanche";
-import { deployRegistry, friendlyWalletError, type Stage } from "@/lib/avalanche/wallet";
+import { deployRegistry, detectedWallets, friendlyWalletError, type Stage } from "@/lib/avalanche/wallet";
 import { ExplorerLinks } from "./ExplorerLinks";
 
 const STAGE_LABEL: Record<Stage, string> = {
@@ -18,6 +18,11 @@ export function DeployRegistry() {
   const [stage, setStage] = useState<Stage | "saving" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [unsaved, setUnsaved] = useState<{ address: string; txHash: string } | null>(null);
+  const [wallets, setWallets] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    detectedWallets().then(setWallets);
+  }, []);
 
   async function deploy() {
     setError(null);
@@ -63,6 +68,8 @@ export function DeployRegistry() {
           </p>
         </div>
       )}
+
+      <WalletDetected wallets={wallets} />
 
       <ol className="space-y-3 text-sm text-text/90">
         <li>
@@ -117,5 +124,26 @@ export function DeployRegistry() {
         </div>
       )}
     </div>
+  );
+}
+
+function WalletDetected({ wallets }: { wallets: string[] | null }) {
+  if (wallets === null) return <p className="text-sm text-muted">Looking for a wallet in this browser…</p>;
+  if (wallets.length === 0) {
+    return (
+      <div className="flex gap-3 rounded-xl border border-danger/40 bg-danger/10 p-3 text-sm">
+        <Wallet size={18} className="shrink-0 text-danger" />
+        <p>
+          <span className="font-semibold text-danger">No wallet detected in this browser.</span> Open{" "}
+          <span className="font-mono">{typeof window !== "undefined" ? window.location.href : "this page"}</span> in the
+          browser where Core is installed (Chrome, Edge or Brave), and refresh.
+        </p>
+      </div>
+    );
+  }
+  return (
+    <p className="flex items-center gap-2 text-sm text-safe">
+      <Wallet size={16} /> Wallet detected: {wallets.join(", ")}
+    </p>
   );
 }
