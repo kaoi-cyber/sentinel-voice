@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { createPublicClient, http, isAddress, type Hex } from "viem";
 import { FUJI_CHAIN } from "./chain";
+import bundledDeployment from "../../../deployments/fuji.json";
 
 export type Deployment = {
   chainId: number;
@@ -25,11 +26,14 @@ export async function readDeployment(): Promise<Deployment | null> {
     return { chainId: FUJI_CHAIN.id, address: fromEnv, txHash: null, deployedAt: "", deployer: null, compiler: "" };
   }
   try {
+    // Local dev: read the file, so a fresh deploy from /deploy shows up without a rebuild.
     const d = JSON.parse(await readFile(FILE, "utf8")) as Deployment;
-    return d && isAddress(d.address) ? d : null;
+    if (d && isAddress(d.address)) return d;
   } catch {
-    return null;
+    // Hosted builds can't read project files at runtime — fall through to the bundled copy.
   }
+  const b = bundledDeployment as Deployment;
+  return b && isAddress(b.address) ? b : null;
 }
 
 export async function saveDeployment(d: Deployment): Promise<void> {

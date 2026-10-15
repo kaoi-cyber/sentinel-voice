@@ -31,11 +31,16 @@ export function ExpertWorkspace() {
   });
   const [customReport, setCustomReport] = useState<SecurityReport | null>(null);
 
+  // Reports carry a timestamp, so build them only in the browser (server HTML would differ).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const report = useMemo(() => {
+    if (!mounted) return null;
     if (selected === CUSTOM.id) return customReport;
     const s = getScenario(selected);
     return s ? analyze(s.tx, { scenarioId: s.id, sample: true }) : null;
-  }, [selected, customReport]);
+  }, [selected, customReport, mounted]);
 
   return (
     <div className="mt-8 space-y-6">

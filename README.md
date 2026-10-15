@@ -10,6 +10,12 @@ An AI-powered safety layer for people entering crypto — built for U-Hackathon 
 
 The rules decide; the AI only explains. Every finding shows its rule, value and source.
 
+## Demo
+
+![Sentinel Voice demo walkthrough](docs/demo/demo.gif)
+
+52-second walkthrough of every feature: [watch the MP4](docs/demo/sentinel-voice-demo.mp4) (silent — VoiceGuard's ElevenLabs voice plays live in the app).
+
 ## Run it
 
 ```bash

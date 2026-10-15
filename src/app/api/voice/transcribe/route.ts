@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ELEVENLABS_API, elevenLabsConfig, elevenLabsError } from "@/lib/voice/elevenlabs";
+import { rateLimited } from "@/lib/rateLimit";
 
 const MAX_BYTES = 10 * 1024 * 1024;
 
@@ -7,6 +8,8 @@ const MAX_BYTES = 10 * 1024 * 1024;
 export async function POST(req: Request) {
   const cfg = elevenLabsConfig();
   if (!cfg) return NextResponse.json({ error: "ElevenLabs API key is not set" }, { status: 503 });
+  if (rateLimited(req, "stt", 20, 10 * 60_000))
+    return NextResponse.json({ error: "Voice limit reached — try again in a few minutes" }, { status: 429 });
 
   const form = await req.formData().catch(() => null);
   const audio = form?.get("audio");

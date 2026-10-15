@@ -8,7 +8,7 @@ import { SAMPLES } from "./samples";
 import type { AllocationsData, Envelope, TokenListItem, TokenomistSnapshot, UnlockEvent } from "./types";
 
 const API = "https://api.tokenomist.ai";
-const CACHE_DIR = path.join(process.cwd(), ".tokenomist-cache");
+const CACHE_DIR = process.env.VERCEL ? "/tmp/tokenomist-cache" : path.join(process.cwd(), ".tokenomist-cache");
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
 export const SAMPLE_IDS = Object.keys(SAMPLES);
@@ -44,8 +44,9 @@ async function get<T>(endpoint: string): Promise<{ body: Envelope<T>; cached: bo
   if (!res.ok || !body?.status) {
     throw new TokenomistError(res.status, body?.errorMessage ?? `Tokenomist returned HTTP ${res.status}`);
   }
-  await mkdir(CACHE_DIR, { recursive: true });
-  await writeFile(file, JSON.stringify({ savedAt: Date.now(), body })).catch(() => undefined);
+  await mkdir(CACHE_DIR, { recursive: true })
+    .then(() => writeFile(file, JSON.stringify({ savedAt: Date.now(), body })))
+    .catch(() => undefined);
   return { body, cached: false };
 }
 
