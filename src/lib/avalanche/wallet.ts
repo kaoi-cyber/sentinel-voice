@@ -66,6 +66,49 @@ async function connectFuji() {
 
 const withBuffer = (gas: bigint) => (gas * 12n) / 10n;
 
+export type TestOutcome = "rejected" | "signed" | "error";
+
+/**
+ * Sends one Drainer Test Pack request to the connected wallet so the team can see how its UI
+ * reacts. The user is told to REJECT; we only report whether it was rejected or signed.
+ * Requests target fictional addresses on the Fuji testnet.
+ */
+export async function sendTestRequest(
+  req: { method: "eth_sendTransaction"; tx: { to: string; value: string; data: string } } | { method: "eth_signTypedData_v4"; typedData: Record<string, unknown> } | { method: "eth_sign"; hash: string } | { method: "personal_sign"; message: string },
+): Promise<{ outcome: TestOutcome; detail: string }> {
+  const provider = await discoverProvider();
+  if (!provider) throw new Error("NO_WALLET");
+  const { account } = await connectFuji();
+  const call = (method: string, params: unknown[]) =>
+    (provider.request as (a: { method: string; params: unknown[] }) => Promise<unknown>)({ method, params });
+  try {
+    switch (req.method) {
+      case "eth_sendTransaction":
+        await call("eth_sendTransaction", [{ from: account, to: req.tx.to, value: "0x" + BigInt(req.tx.value).toString(16), data: req.tx.data }]);
+        break;
+      case "eth_signTypedData_v4":
+      {
+        // Make the permit look like it's for the connected account, as a real drainer would.
+        const message = { ...(req.typedData.message as Record<string, unknown>) };
+        if ("owner" in message) message.owner = account;
+        await call("eth_signTypedData_v4", [account, JSON.stringify({ ...req.typedData, message })]);
+      }
+        break;
+      case "eth_sign":
+        await call("eth_sign", [account, req.hash]);
+        break;
+      case "personal_sign":
+        await call("personal_sign", ["0x" + Array.from(new TextEncoder().encode(req.message), (b) => b.toString(16).padStart(2, "0")).join(""), account]);
+        break;
+    }
+    return { outcome: "signed", detail: "The wallet let it through and it was signed." };
+  } catch (e) {
+    const msg = friendlyWalletError(e);
+    if (/cancelled/.test(msg)) return { outcome: "rejected", detail: "You rejected it in the wallet." };
+    return { outcome: "error", detail: msg };
+  }
+}
+
 export async function recordReport(registry: Hex, reportHash: Hex, riskLevel: string, onStage: (s: Stage) => void) {
   onStage("connecting");
   const { wallet, pub, account } = await connectFuji();

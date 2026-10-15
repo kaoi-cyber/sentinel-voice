@@ -1,7 +1,7 @@
 // Security controls a wallet company is asked about. Each maps to a real drain vector
 // and a concrete fix. Answers are self-reported — the report says so.
 
-export type ControlAnswer = "yes" | "partial" | "no";
+export type ControlAnswer = "yes" | "partial" | "no" | "unknown";
 
 export type Control = {
   id: string;

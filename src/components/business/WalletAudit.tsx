@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, ClipboardList, Copy, FileCheck2, FlaskConical, ShieldCheck, ShieldX, Wand2 } from "lucide-react";
+import { Check, ClipboardList, Copy, FileCheck2, FlaskConical, Loader2, Send, ShieldCheck, ShieldX, Wand2 } from "lucide-react";
 import { RecordOnAvalanche } from "@/components/avalanche/RecordOnAvalanche";
 import { VerifyReport } from "@/components/avalanche/VerifyReport";
 import { CONTROLS, type ControlAnswer } from "@/lib/audit/controls";
@@ -9,6 +9,7 @@ import { detect } from "@/lib/audit/detect";
 import { buildAuditReport, RESULT_LABEL, type Gap, type WalletAuditReport, type WalletResult } from "@/lib/audit/report";
 import { TEST_PACK, type TestCase } from "@/lib/audit/testpack";
 import { hashReport } from "@/lib/security/hash";
+import { sendTestRequest, type TestOutcome } from "@/lib/avalanche/wallet";
 import { DEMO_WALLET } from "@/lib/security/reputation";
 
 const ATTACK_OPTIONS: WalletResult[] = ["blocked", "clear_warning", "weak_warning", "no_warning", "not_tested"];
@@ -114,8 +115,8 @@ export function WalletAudit() {
                 <p className="mt-1 text-sm">{c.question}</p>
               </div>
               <Segmented
-                options={["yes", "partial", "no"] as ControlAnswer[]}
-                labels={{ yes: "Yes", partial: "Partly", no: "No" }}
+                options={["yes", "partial", "no", "unknown"] as ControlAnswer[]}
+                labels={{ yes: "Yes", partial: "Partly", no: "No", unknown: "Not sure" }}
                 value={answers[c.id]}
                 onChange={(v) => setAnswers({ ...answers, [c.id]: v })}
               />
@@ -198,6 +199,20 @@ function Segmented<T extends string>({
 
 function TestCard({ t, value, onChange }: { t: TestCase; value: WalletResult; onChange: (v: WalletResult) => void }) {
   const [copied, setCopied] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [live, setLive] = useState<{ outcome: TestOutcome; detail: string } | null>(null);
+
+  async function sendToWallet() {
+    setSending(true);
+    setLive(null);
+    try {
+      setLive(await sendTestRequest(t.request));
+    } catch (e) {
+      setLive({ outcome: "error", detail: e instanceof Error && e.message === "NO_WALLET" ? "No wallet found in this browser — open this page in Chrome with Core installed." : String(e) });
+    } finally {
+      setSending(false);
+    }
+  }
   const sentinel = detect(t.request, t.recentAddresses);
   const payload = JSON.stringify(toRpc(t), null, 2);
   const isAttack = t.kind === "attack";
@@ -251,8 +266,27 @@ function TestCard({ t, value, onChange }: { t: TestCase; value: WalletResult; on
           </button>
         </div>
       </details>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={sendToWallet}
+          disabled={sending}
+          className="inline-flex items-center gap-2 rounded-lg border border-violet/60 px-3 py-1.5 text-xs font-semibold text-text transition hover:bg-violet/15 disabled:opacity-50"
+        >
+          {sending ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+          {sending ? "Waiting for your wallet…" : "Send to my wallet"}
+        </button>
+        <span className="text-xs text-gold">{isAttack ? "Look at the warning, then click Reject. Never approve or sign." : "Legitimate request — note whether your wallet raised a false alarm, then Reject."}</span>
+      </div>
+      {live && (
+        <p className={`mt-2 text-xs ${live.outcome === "rejected" ? "text-safe" : live.outcome === "signed" ? "text-danger" : "text-muted"}`}>
+          {live.outcome === "rejected" ? "✓ " : live.outcome === "signed" ? "⚠ " : ""}
+          {live.detail}
+          {live.outcome === "signed" && isAttack && " (Testnet only, fictional addresses — but in real life this is how funds get drained.)"}
+        </p>
+      )}
       <div className="mt-4">
-        <p className="mb-2 text-xs text-muted">What did your wallet do?</p>
+        <p className="mb-2 text-xs text-muted">What did your wallet show?</p>
         <Segmented
           options={isAttack ? ATTACK_OPTIONS : CONTROL_CASE_OPTIONS}
           labels={isAttack ? RESULT_LABEL : CONTROL_CASE_LABEL}

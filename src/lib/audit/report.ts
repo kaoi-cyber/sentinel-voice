@@ -18,7 +18,7 @@ export const RESULT_LABEL: Record<WalletResult, string> = {
 };
 
 const CREDIT: Record<WalletResult, number> = { blocked: 1, clear_warning: 1, weak_warning: 0.5, no_warning: 0, not_tested: 0 };
-const ANSWER_CREDIT: Record<ControlAnswer, number> = { yes: 1, partial: 0.5, no: 0 };
+const ANSWER_CREDIT: Record<ControlAnswer, number> = { yes: 1, partial: 0.5, no: 0, unknown: 0 };
 
 export type Gap = { severity: "critical" | "high" | "medium" | "low"; area: string; title: string; why: string; fix: string };
 
@@ -91,9 +91,9 @@ export function buildAuditReport(input: {
     const a = input.answers[c.id] ?? "no";
     if (a === "yes") continue;
     gaps.push({
-      severity: c.weight === 3 ? (a === "no" ? "critical" : "high") : a === "no" ? "medium" : "low",
+      severity: a === "unknown" ? "medium" : c.weight === 3 ? (a === "no" ? "critical" : "high") : a === "no" ? "medium" : "low",
       area: c.area,
-      title: a === "partial" ? `Partially in place: ${c.question}` : `Missing: ${c.question}`,
+      title: a === "unknown" ? `Not verified: ${c.question}` : a === "partial" ? `Partially in place: ${c.question}` : `Missing: ${c.question}`,
       why: c.risk,
       fix: c.fix,
     });
