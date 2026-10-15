@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Check, Copy, Fingerprint, Link2 } from "lucide-react";
+import { Check, Copy, Fingerprint } from "lucide-react";
 import { analyze } from "@/lib/security/engine";
 import { getScenario, SCENARIOS } from "@/lib/security/scenarios";
 import { sortFindings } from "@/lib/security/explain";
@@ -11,6 +11,8 @@ import { encodeCall, MAX_UINT256 } from "@/lib/security/abi";
 import { FUJI, KNOWN } from "@/lib/security/reputation";
 import type { SecurityReport, TxInput } from "@/lib/security/types";
 import { ListenButton } from "@/components/voice/ListenButton";
+import { RecordOnAvalanche } from "@/components/avalanche/RecordOnAvalanche";
+import { VerifyReport } from "@/components/avalanche/VerifyReport";
 import { expertSummary } from "@/lib/voice/scripts";
 import { ScenarioPicker } from "./ScenarioPicker";
 import { RiskBadge, SeverityPill } from "./RiskBadge";
@@ -59,7 +61,8 @@ export function ExpertWorkspace() {
         </form>
       )}
 
-      {report && <ExpertReport report={report} />}
+      {report && <ExpertReport key={report.generated_at} report={report} />}
+      <VerifyReport />
     </div>
   );
 }
@@ -67,6 +70,7 @@ export function ExpertWorkspace() {
 function ExpertReport({ report }: { report: SecurityReport }) {
   const [hash, setHash] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [verificationTx, setVerificationTx] = useState<string | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -77,7 +81,7 @@ function ExpertReport({ report }: { report: SecurityReport }) {
     };
   }, [report]);
 
-  const json = JSON.stringify({ ...report, report_hash: hash }, null, 2);
+  const json = JSON.stringify({ ...report, report_hash: hash, verification_tx: verificationTx }, null, 2);
   const d = report.decoded;
 
   return (
@@ -180,14 +184,9 @@ function ExpertReport({ report }: { report: SecurityReport }) {
             {copied ? <Check size={16} className="text-safe" /> : <Copy size={16} />}
             {copied ? "Copied" : "Copy JSON"}
           </button>
-          <button
-            type="button"
-            disabled
-            title="Avalanche Fuji publishing is the next integration"
-            className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl border border-line px-4 py-2 text-sm font-semibold text-muted opacity-60"
-          >
-            <Link2 size={16} /> Record on Avalanche Fuji — coming soon
-          </button>
+        </div>
+        <div className="mt-4">
+          <RecordOnAvalanche reportHash={hash} riskLevel={report.risk_level} onRecorded={setVerificationTx} />
         </div>
         <pre className="mt-4 max-h-96 overflow-auto rounded-xl border border-line bg-ink/70 p-4 font-mono text-xs leading-relaxed text-text/85">
           {json}

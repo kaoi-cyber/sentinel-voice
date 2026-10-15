@@ -11,7 +11,10 @@ const NOT_CHECKED = [
   "The website, message or person asking you to sign",
 ];
 
-export function analyze(tx: TxInput, opts: { scenarioId?: string; sample?: boolean } = {}): SecurityReport {
+export function analyze(
+  tx: TxInput,
+  opts: { scenarioId?: string; sample?: boolean; generatedAt?: string } = {},
+): SecurityReport {
   const to = tx.to.trim().toLowerCase();
   const decoded = decodeCall(tx.data);
   const token = lookupToken(to);
@@ -127,6 +130,7 @@ export function analyze(tx: TxInput, opts: { scenarioId?: string; sample?: boole
     schema_version: "1.0",
     scenario_id: opts.scenarioId ?? null,
     sample_data: opts.sample ?? false,
+    generated_at: opts.generatedAt ?? new Date().toISOString(),
     chain: tx.chain_id === FUJI.chain_id ? { ...FUJI } : { name: `Chain ${tx.chain_id}`, chain_id: tx.chain_id },
     transaction: { ...tx, to },
     decoded,

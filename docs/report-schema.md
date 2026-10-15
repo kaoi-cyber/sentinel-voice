@@ -11,6 +11,7 @@ Type definitions: `src/lib/security/types.ts`.
   "schema_version": "1.0",
   "scenario_id": "unlimited-approval",
   "sample_data": true,
+  "generated_at": "2026-10-15T10:30:00.000Z",
   "chain": { "name": "Avalanche Fuji (testnet)", "chain_id": 43113 },
   "transaction": { "chain_id": 43113, "from": "0x9c1d…8c9d", "to": "0x5f0e…5e4f", "value": "0", "data": "0x095ea7b3…" },
   "decoded": { "kind": "approve", "function": "approve(address,uint256)", "selector": "0x095ea7b3", "spender": "0x7a2c…8a0c", "amount_raw": "115792…9935", "unlimited": true },
@@ -60,6 +61,8 @@ Priority: any `high` finding → `high`; else undecodable → `insufficient`; el
 \* marked `unverified: true`.
 
 ## Report hash
+
+Every report carries `generated_at`, so each analysis — even of the same transaction — has its own fingerprint and can be recorded on-chain once.
 
 `report_hash` = SHA-256 of the report as canonical JSON (keys sorted) with `report_hash` and `verification_tx` set to `null` (`src/lib/security/hash.ts`). The Avalanche contract stores this hash; anyone can recompute it from the JSON to check the report wasn't changed. It proves the report is unchanged — not that the analysis is correct.
 

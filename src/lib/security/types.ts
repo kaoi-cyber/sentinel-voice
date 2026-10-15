@@ -72,6 +72,8 @@ export type SecurityReport = {
   scenario_id: string | null;
   /** True when the input is one of our prepared demo transactions. */
   sample_data: boolean;
+  /** When this analysis ran (ISO 8601). Makes every report's fingerprint unique. */
+  generated_at: string;
   chain: { name: string; chain_id: number };
   transaction: TxInput;
   decoded: Decoded;

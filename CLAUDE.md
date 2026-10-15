@@ -6,9 +6,11 @@ AI-powered crypto education + security app for U-Hackathon 2026 (Bangkok, Oct 15
 - `npm run dev` — dev server on http://localhost:3000
 - `npm run build` / `npm run lint` / `npm run typecheck`
 - `npm run check:engine` — sanity checks for the security engine and VoiceGuard answer matching (all must PASS)
+- `npm run compile:contract` — recompile `contracts/SentinelReportRegistry.sol` → `src/lib/avalanche/registry-artifact.json`
+- `npm run check:contract` — contract tests on a local chain (start one first: `npx ganache@7.9.2 --port 8547 --chain.chainId 43113`)
 
 ## Stack
-Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/app/globals.css`), lucide-react. No backend or wallet connection yet.
+Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/app/globals.css`), lucide-react, viem (wallet/chain), solc (dev, contract compile).
 
 ## Security engine
 - `src/lib/security/`: `types.ts` (shared report format — see `docs/report-schema.md`), `engine.ts` (rules → findings → risk level), `abi.ts` (ERC-20 transfer/approve calldata), `reputation.ts` (fictional DEMO data), `scenarios.ts` (3 samples), `explain.ts` (beginner wording), `hash.ts` (SHA-256 report fingerprint).
@@ -22,6 +24,14 @@ Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/a
 - Key lives only in `.env.local` (git-ignored; template in `.env.example`). Never ask the user to paste keys in chat.
 - Server routes: `src/app/api/voice/{status,speak,transcribe}` → ElevenLabs TTS (`eleven_flash_v2_5`, cached on disk in `.voice-cache/`) and STT (`scribe_v2`). Speak retries with the account's first voice if the default voice 404s.
 - Client: `src/lib/voice/player.ts` (single shared speaker, falls back to browser speechSynthesis), `useVoiceInput.ts` (MediaRecorder → transcribe; falls back to Web Speech API), `scripts.ts` (spoken text). `ListenButton` shows "Voice by ElevenLabs" only when ElevenLabs actually played.
+
+## Avalanche (Fuji report registry)
+- Contract `contracts/SentinelReportRegistry.sol`: `record(bytes32 hash, string riskLevel)` (rejects duplicates/empty), `verify(bytes32)`. Stores only hash + risk level. Compiled with evmVersion "paris".
+- The user's own wallet (Core/MetaMask, EIP-6963) signs deploy + record in the browser (`src/lib/avalanche/wallet.ts`). Never handle private keys.
+- `/deploy` (team page, not in nav) deploys once; dev server saves `deployments/fuji.json` after checking the tx on-chain. `REPORT_REGISTRY_ADDRESS` env overrides it.
+- API: `/api/avalanche/{config,verify,deployment}`; `AVALANCHE_RPC_URL` env points the server at a local test chain.
+- Expert view: `RecordOnAvalanche` + `VerifyReport` (paste JSON → recompute SHA-256 → check registry; detects edits). Reports carry `generated_at`, so every analysis has a unique hash.
+- Explorers: Snowtrace testnet + subnets-test.avax.network/c-chain.
 
 ## Product
 - One shared deterministic security engine; AI only *explains* its findings, never invents verdicts.

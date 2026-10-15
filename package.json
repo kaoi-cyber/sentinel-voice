@@ -8,13 +8,16 @@
     "start": "next start",
     "lint": "eslint",
     "check:engine": "tsx scripts/check-engine.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "compile:contract": "tsx scripts/compile-contract.ts",
+    "check:contract": "tsx scripts/check-contract.ts"
   },
   "dependencies": {
     "lucide-react": "^1.57.0",
     "next": "15.5.28",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "viem": "^2.57.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -24,6 +27,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.28",
+    "solc": "^0.8.37",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
