@@ -4,10 +4,15 @@ AI-powered crypto education + security app for U-Hackathon 2026 (Bangkok, Oct 15
 
 ## Commands
 - `npm run dev` — dev server on http://localhost:3000
-- `npm run build` / `npm run lint` / `npx tsc --noEmit`
+- `npm run build` / `npm run lint` / `npm run typecheck`
+- `npm run check:engine` — sanity checks for the security engine (all must PASS)
 
 ## Stack
 Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/app/globals.css`), lucide-react. No backend or wallet connection yet.
+
+## Security engine
+- `src/lib/security/`: `types.ts` (shared report format — see `docs/report-schema.md`), `engine.ts` (rules → findings → risk level), `abi.ts` (ERC-20 transfer/approve calldata), `reputation.ts` (fictional DEMO data), `scenarios.ts` (3 samples), `explain.ts` (beginner wording), `hash.ts` (SHA-256 report fingerprint).
+- UI: `src/components/security/` — `SentinelChecker` (/security, beginner) and `ExpertWorkspace` (/expert, evidence + JSON + paste-your-own).
 
 ## Product
 - One shared deterministic security engine; AI only *explains* its findings, never invents verdicts.
