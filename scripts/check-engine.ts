@@ -46,6 +46,11 @@ const asks: [string, string][] = [
   ["will solana go up next week", "I can't pick investments for you"],
   ["what's the best coin to invest in", "I can't pick investments for you"],
   ["tell me a joke", "I don't have an answer for that yet"],
+  ["how do I buy crypto", "How do I buy crypto safely?"],
+  ["which exchange is safe?", "How do I know if an exchange is safe?"],
+  ["how can I save in crypto in a secure way", "How can I build savings in crypto carefully?"],
+  ["is USDC safe for savings", "Are stablecoins a safe place to save?"],
+  ["which coin is the best investment", "I can't pick investments for you"],
 ];
 for (const [q, want] of asks) expect(`"${q}"`, answerQuestion(q).title, want);
 const broken = KNOWLEDGE.flatMap((e) => e.followUps.filter((id) => !getEntry(id)).map((id) => `${e.id} -> ${id}`));

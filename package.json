@@ -10,7 +10,8 @@
     "check:engine": "tsx scripts/check-engine.ts",
     "typecheck": "tsc --noEmit",
     "compile:contract": "tsx scripts/compile-contract.ts",
-    "check:contract": "tsx scripts/check-contract.ts"
+    "check:contract": "tsx scripts/check-contract.ts",
+    "fetch:prices": "tsx scripts/fetch-prices.ts"
   },
   "dependencies": {
     "lucide-react": "^1.57.0",

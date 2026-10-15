@@ -2,7 +2,7 @@
 // and education only — never tells anyone what to buy or predicts prices.
 // Step 5 (ElevenLabs) will read `paragraphs` aloud, so keep them speakable.
 
-export type Topic = "Basics" | "Wallets" | "Security" | "Investing" | "Tokenomics";
+export type Topic = "Getting started" | "Basics" | "Wallets" | "Security" | "Investing" | "Tokenomics";
 
 export type KnowledgeEntry = {
   id: string;
@@ -15,9 +15,57 @@ export type KnowledgeEntry = {
   followUps: string[];
 };
 
-export const TOPICS: Topic[] = ["Basics", "Wallets", "Security", "Investing", "Tokenomics"];
+export const TOPICS: Topic[] = ["Getting started", "Basics", "Wallets", "Security", "Investing", "Tokenomics"];
 
 export const KNOWLEDGE: KnowledgeEntry[] = [
+  // ── Getting started ─────────────────────────────────────────────────────
+  {
+    id: "how-to-buy",
+    topic: "Getting started",
+    question: "How do I buy crypto safely?",
+    keywords: ["buy", "buy crypto", "how to buy", "purchase", "get started", "start investing", "first crypto"],
+    paragraphs: [
+      "Start with a regulated exchange in your country, verify your identity, and turn on app-based two-factor authentication. Then buy a small amount first to learn how it works.",
+      "For long-term savings, many people move their crypto to a wallet they control. The Start safely page walks you through every step, with the scam to watch for at each one.",
+    ],
+    bullets: ["Type the exchange address yourself — never click links from ads or DMs", "Only use money you could afford to lose"],
+    followUps: ["choose-platform", "what-is-wallet", "regular-saving"],
+  },
+  {
+    id: "choose-platform",
+    topic: "Getting started",
+    question: "How do I know if an exchange is safe?",
+    keywords: ["exchange", "platform", "safe exchange", "secure platform", "which exchange", "trust exchange", "binance", "coinbase", "kraken"],
+    paragraphs: [
+      "I don't name 'safe' exchanges — some that looked safe have collapsed overnight. Instead, check any platform yourself.",
+      "Look for a licence from your country's financial regulator, regular proof-of-reserves, strong account security, a long clean track record, and easy withdrawals to your own wallet.",
+    ],
+    bullets: ["Be wary of platforms promising high fixed interest", "Real support never DMs you first or asks for your seed phrase"],
+    followUps: ["how-to-buy", "common-scams", "seed-phrase"],
+  },
+  {
+    id: "stablecoins",
+    topic: "Getting started",
+    question: "Are stablecoins a safe place to save?",
+    keywords: ["stablecoin", "stablecoins", "usdc", "usdt", "tether", "stable", "yield", "interest"],
+    paragraphs: [
+      "Stablecoins aim to stay worth one dollar, but they're not bank accounts. They aren't government-insured, and some have lost their peg in the past.",
+      "Be very careful with platforms offering high 'interest' on stablecoins — high yield always means high risk.",
+    ],
+    followUps: ["choose-platform", "regular-saving", "common-scams"],
+  },
+  {
+    id: "regular-saving",
+    topic: "Getting started",
+    question: "How can I build savings in crypto carefully?",
+    keywords: ["save", "savings", "saving", "build savings", "monthly", "regularly", "secure way", "safely invest"],
+    paragraphs: [
+      "Many careful savers keep an emergency fund in ordinary savings first, then put a small fixed amount into crypto each month instead of trying to time the market.",
+      "History shows crypto can fall 75 to 95 percent, so only save what you could leave untouched for years — and keep most of your savings outside crypto. The savings simulator on the Start safely page shows both the gains and the scary dips.",
+    ],
+    followUps: ["long-term", "volatility", "stablecoins"],
+  },
+
   // ── Basics ──────────────────────────────────────────────────────────────
   {
     id: "what-is-crypto",

@@ -7,6 +7,7 @@ AI-powered crypto education + security app for U-Hackathon 2026 (Bangkok, Oct 15
 - `npm run build` / `npm run lint` / `npm run typecheck`
 - `npm run check:engine` — sanity checks for the security engine and VoiceGuard answer matching (all must PASS)
 - `npm run compile:contract` — recompile `contracts/SentinelReportRegistry.sol` → `src/lib/avalanche/registry-artifact.json`
+- `npm run fetch:prices` — refresh `src/data/prices.json` (Binance public monthly closes, no key)
 - `npm run check:contract` — contract tests on a local chain (start one first: `npx ganache@7.9.2 --port 8547 --chain.chainId 43113`)
 
 ## Stack
@@ -19,6 +20,7 @@ Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/a
 ## VoiceGuard
 - `src/lib/voiceguard/knowledge.ts`: prepared, reviewed Q&A (no live LLM — chosen for demo reliability). `answer.ts`: keyword matching, investment-advice guardrail, fallback, and `explainReport()` for Sentinel results.
 - UI: `src/components/voiceguard/VoiceGuardChat.tsx` on `/learn`; `/learn?explain=<scenario-id>` opens with that explanation.
+- `/learn/start` "Start safely": buying guide, platform-security checklist (never names "safe" exchanges), real price history (`src/lib/markets/stats.ts`: worst fall, yearly returns) and a regular-saving simulator that always shows the worst dip. No coin picks or predictions.
 
 ## Voice (ElevenLabs)
 - Key lives only in `.env.local` (git-ignored; template in `.env.example`). Never ask the user to paste keys in chat.
