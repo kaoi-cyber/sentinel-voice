@@ -49,7 +49,7 @@ Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/a
 ## Agent Payment Guard (U-topia, `/guard`, third tab on Security)
 - `src/lib/guard/engine.ts`: policy layer for AI-agent payments (per-payment limit, daily cap, ask-above, new recipients need OK, agents never grant permissions) + Sentinel drainer detection (`audit/detect.ts`). Verdict allow/ask/block with reasons; the agent's note is shown but never trusted.
 - `scenarios.ts`: simulated agent queue (8 intents) + trusted contacts. Activity log schema `payment-guard-1.0`, recordable on Avalanche.
-- U-topia/U-bot have NO public API (u.bot is a consumer AI assistant; U-topia = U-Pay/U-Card payments app launching at FLOW Summit). Always label as "designed for U-topia, integration pending developer access". `docs/ubot-quiz-prompt.md` = U-Code prompt for a companion quiz the user builds in u.bot.
+- U-topia/U-bot have NO public API (u.bot is a consumer AI assistant; U-topia = U-Pay/U-Card payments app launching at FLOW Summit). Always label as "designed for U-topia, integration pending developer access". `docs/ubot-quiz-prompt.md` = U-Code prompt; the quiz U-bot generated lives in `src/components/ubot-quiz/` (scoped CSS, shuffled answers, no external requests) at `/quiz`, credited "Built with U-bot".
 
 ## Product
 - One shared deterministic security engine; AI only *explains* its findings, never invents verdicts.
