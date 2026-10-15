@@ -22,7 +22,9 @@ export function expertSummary(r: SecurityReport): string {
     const party = r.counterparty;
     const who = party?.label ?? `an unlabelled address ending in ${party?.address.slice(-4).split("").join(" ")}`;
     parts.push(`Decoded call: ${d.kind} on ${sym}, ${party?.role ?? "counterparty"} ${who}.`);
-    if (d.kind === "approve") {
+    if (d.kind === "approval_for_all") {
+      parts.push(d.approved ? "Approval for all items in the collection." : "Revokes a collection-wide approval.");
+    } else if (d.kind === "approve") {
       parts.push(
         d.unlimited
           ? "Allowance: unlimited."

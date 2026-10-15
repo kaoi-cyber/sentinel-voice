@@ -28,7 +28,7 @@ export function VerifyReport({ currentJson }: { currentJson?: string }) {
     let report: { schema_version?: string; report_hash?: string | null; verification_tx?: string | null };
     try {
       report = JSON.parse(text);
-      if (!report || typeof report !== "object" || !["1.0", "supply-1.0"].includes(report.schema_version ?? "")) throw new Error();
+      if (!report || typeof report !== "object" || !["1.0", "supply-1.0", "wallet-audit-1.0"].includes(report.schema_version ?? "")) throw new Error();
     } catch {
       setError("That doesn't look like a Sentinel report. Paste the full JSON from “Copy JSON”.");
       return;

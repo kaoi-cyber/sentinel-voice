@@ -51,8 +51,9 @@ export function analyze(
       });
     }
 
-    const party = decoded.kind === "approve" ? decoded.spender : decoded.recipient;
-    const role = decoded.kind === "approve" ? "spender" : "recipient";
+    const party =
+      decoded.kind === "approve" ? decoded.spender : decoded.kind === "approval_for_all" ? decoded.operator : decoded.recipient;
+    const role = decoded.kind === "approve" ? "spender" : decoded.kind === "approval_for_all" ? "operator" : "recipient";
     const label = lookupLabel(party);
     counterparty = { role, address: party, label };
 
@@ -66,14 +67,42 @@ export function analyze(
       });
     }
 
-    if (decoded.kind === "approve") {
+    if (decoded.kind === "approval_for_all") {
+      checks.push("Checked for collection-wide NFT approvals (setApprovalForAll)");
+      if (decoded.approved) {
+        add({
+          rule_id: "NFT_APPROVAL_FOR_ALL",
+          severity: "high",
+          title: "Approval for ALL items in a collection",
+          evidence: `setApprovalForAll(${party}, true) lets the operator move every NFT you hold in ${to}, now and later.`,
+        });
+      } else {
+        add({
+          rule_id: "APPROVAL_FOR_ALL_REVOKED",
+          severity: "info",
+          title: "Removes a collection-wide approval",
+          evidence: `setApprovalForAll(${party}, false) revokes the operator's access.`,
+        });
+      }
+      if (label) {
+        add({ rule_id: "KNOWN_SPENDER", severity: "info", title: `Operator recognised: ${label}`, evidence: `${party} is listed as "${label}".` });
+      } else if (decoded.approved) {
+        add({
+          rule_id: "UNKNOWN_SPENDER",
+          severity: "medium",
+          unverified: true,
+          title: "Operator not recognised",
+          evidence: `${party} has no entry in the reputation list. Unknown does not mean malicious.`,
+        });
+      }
+    } else if (decoded.kind === "approve") {
       checks.push("Checked the approval amount against the unlimited threshold (≥ 2^128)");
       if (decoded.unlimited) {
         add({
           rule_id: "UNLIMITED_ALLOWANCE",
           severity: "high",
           title: "Unlimited token approval",
-          evidence: `approve() amount is ${decoded.amount_raw} (≥ 2^128), effectively unlimited ${symbol}.`,
+          evidence: `${decoded.function.split("(")[0]}() amount is ${decoded.amount_raw} (≥ 2^128), effectively unlimited ${symbol}.`,
         });
       } else {
         add({

@@ -112,9 +112,9 @@ function ExpertReport({ report }: { report: SecurityReport }) {
               <KV k="function" v={d.function} />
               <KV k="selector" v={d.selector} />
               <KV k="token" v={report.token ? `${report.token.symbol} · ${report.token.decimals} decimals` : "unrecognised"} />
-              <KV k={d.kind === "approve" ? "spender" : "recipient"} v={report.counterparty?.address ?? "—"} />
+              <KV k={report.counterparty?.role ?? "counterparty"} v={report.counterparty?.address ?? "—"} />
               <KV k="label" v={report.counterparty?.label ?? "none (not in reputation list)"} />
-              <KV k="amount_raw" v={d.amount_raw} />
+              {d.kind === "approval_for_all" ? <KV k="approved" v={String(d.approved)} /> : <KV k="amount_raw" v={d.amount_raw} />}
               {d.kind === "approve" && <KV k="unlimited" v={String(d.unlimited)} />}
             </>
           )}

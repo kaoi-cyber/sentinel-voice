@@ -8,6 +8,10 @@ import { getEntry, KNOWLEDGE } from "../src/lib/voiceguard/knowledge";
 import { analyzeSupply } from "../src/lib/supply/engine";
 import { SAMPLES } from "../src/lib/tokenomist/samples";
 import type { TokenomistSnapshot } from "../src/lib/tokenomist/types";
+import { TEST_PACK } from "../src/lib/audit/testpack";
+import { detect } from "../src/lib/audit/detect";
+import { buildAuditReport } from "../src/lib/audit/report";
+import { CONTROLS } from "../src/lib/audit/controls";
 
 let failed = 0;
 function expect(name: string, got: string, want: string) {
@@ -81,5 +85,21 @@ expect("stale data → unverified", supply(stale).risk_level, "unverified");
 const nova = supply(snap("sample-nova"));
 expect("NOVA next unlock in 9 days", String(nova.metrics.next_unlock?.days_away), "9");
 expect("NOVA holder groups sum to 100%", nova.metrics.holders.reduce((a, h) => a + h.percent, 0).toFixed(1), "100.0");
+
+console.log("\nWallet audit — drainer test pack");
+for (const t of TEST_PACK) {
+  const d = detect(t.request, t.recentAddresses);
+  expect(`${t.kind === "attack" ? "flags" : "allows"} ${t.name}`, String(d.flagged), String(t.kind === "attack"));
+}
+const allYes = Object.fromEntries(CONTROLS.map((c) => [c.id, "yes" as const]));
+const perfect = Object.fromEntries(TEST_PACK.map((t) => [t.id, t.kind === "attack" ? ("blocked" as const) : ("no_warning" as const)]));
+const best = buildAuditReport({ company: "A", wallet: "W", results: perfect, answers: allYes });
+expect("perfect wallet → grade A, 100", `${best.scores.grade} ${best.scores.overall} gaps:${best.gaps.length}`, "A 100 gaps:0");
+const worst = buildAuditReport({ company: "A", wallet: "W", results: {}, answers: {} });
+expect("untested wallet → grade F", worst.scores.grade, "F");
+const noPermit = buildAuditReport({ company: "A", wallet: "W", results: { ...perfect, "permit-signature": "no_warning" }, answers: allYes });
+expect("missing Permit warning → critical gap first", `${noPermit.gaps[0]?.severity}:${noPermit.gaps[0]?.title}`, "critical:No warning on EIP-2612 Permit signature");
+const noisy = buildAuditReport({ company: "A", wallet: "W", results: { ...perfect, "control-login": "clear_warning" }, answers: allYes });
+expect("false alarm counted", String(noisy.scores.false_alarms), "1");
 
 process.exit(failed ? 1 : 0);

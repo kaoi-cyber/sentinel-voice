@@ -39,6 +39,11 @@ Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/a
 - `src/lib/supply/engine.ts`: deterministic rules + THRESHOLDS (unlock ≤30d & ≥5% mcap = high, insider-heavy unlock, low float <30%, insider concentration ≥40%, TBD ≥20%). Missing/stale/AI-listed/inconsistent data → unverified/insufficient, never "safe". Every finding cites `source_fields`. Report schema `supply-1.0` with `data_source.data_hash` (SHA-256 of raw Tokenomist data); recordable/verifiable on Avalanche like transaction reports.
 - Holder chart colors validated with the dataviz validator against the navy surface.
 
+## Sentinel for Wallets (B2B, `/business`; `?demo=1` loads fictional DemoWallet + report)
+- `src/lib/audit/testpack.ts`: Drainer Test Pack — 7 attacks (unlimited approve, increaseAllowance, setApprovalForAll, EIP-2612 Permit, Permit2, blind eth_sign, address poisoning) + 2 benign controls (false-alarm check). Payloads shown as JSON-RPC.
+- `detect.ts`: Sentinel reference detector for any signing request (tx via core engine; typed data/eth_sign/personal_sign/poisoning rules). Core engine now decodes increaseAllowance + setApprovalForAll.
+- `controls.ts` (10 weighted questions) + `report.ts` (score = 60% weighted drainer coverage + 40% controls − 2/false alarm; grade A–F; prioritised gaps). Schema `wallet-audit-1.0`, recordable on Avalanche. Always disclosed as a self-assessment, not a pentest; roadmap section explains the path to authorised AI-assisted pentesting.
+
 ## Product
 - One shared deterministic security engine; AI only *explains* its findings, never invents verdicts.
 - Layer 1 **VoiceGuard AI** (`/learn`): beginner education — crypto, wallets, volatility, tokenomics, scams; voice.

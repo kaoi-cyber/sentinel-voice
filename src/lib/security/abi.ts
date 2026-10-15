@@ -4,6 +4,8 @@ import type { Decoded } from "./types";
 export const SELECTORS = {
   transfer: "0xa9059cbb",
   approve: "0x095ea7b3",
+  increaseAllowance: "0x39509351",
+  setApprovalForAll: "0xa22cb465",
 } as const;
 
 export const MAX_UINT256 = (1n << 256n) - 1n;
@@ -18,7 +20,7 @@ export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 const HEX = /^0x[0-9a-f]*$/;
 
-export function encodeCall(fn: "transfer" | "approve", address: string, amount: bigint): string {
+export function encodeCall(fn: "transfer" | "approve" | "increaseAllowance" | "setApprovalForAll", address: string, amount: bigint): string {
   const addr = address.toLowerCase().replace(/^0x/, "").padStart(64, "0");
   const amt = amount.toString(16).padStart(64, "0");
   return SELECTORS[fn] + addr + amt;
@@ -30,7 +32,7 @@ export function decodeCall(data: string): Decoded {
 
   const selector = hex.slice(0, 10);
   const args = hex.slice(10);
-  const isKnown = selector === SELECTORS.transfer || selector === SELECTORS.approve;
+  const isKnown = (Object.values(SELECTORS) as string[]).includes(selector);
   // Two 32-byte arguments; the address word must have its top 12 bytes empty.
   if (!isKnown || args.length !== 128 || !/^0{24}/.test(args)) return { kind: "unknown", selector };
 
@@ -40,9 +42,14 @@ export function decodeCall(data: string): Decoded {
   if (selector === SELECTORS.transfer) {
     return { kind: "transfer", function: "transfer(address,uint256)", selector, recipient: address, amount_raw: amount.toString() };
   }
+  if (selector === SELECTORS.setApprovalForAll) {
+    // The second argument is a bool: exactly 0 or 1.
+    if (amount > 1n) return { kind: "unknown", selector };
+    return { kind: "approval_for_all", function: "setApprovalForAll(address,bool)", selector, operator: address, approved: amount === 1n };
+  }
   return {
     kind: "approve",
-    function: "approve(address,uint256)",
+    function: selector === SELECTORS.increaseAllowance ? "increaseAllowance(address,uint256)" : "approve(address,uint256)",
     selector,
     spender: address,
     amount_raw: amount.toString(),

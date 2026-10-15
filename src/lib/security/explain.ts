@@ -24,6 +24,11 @@ export function describeAction(r: SecurityReport): string {
   const who = r.counterparty?.label ?? "an address we don't recognise";
   const d = r.decoded;
   if (d.kind === "unknown") return "Calls a contract function we can't decode.";
+  if (d.kind === "approval_for_all") {
+    return d.approved
+      ? `Gives ${who} control of every NFT you own in this collection.`
+      : `Removes ${who}'s access to your NFTs in this collection.`;
+  }
   const amount = r.token ? formatUnits(BigInt(d.amount_raw), r.token.decimals) : null;
   if (d.kind === "approve") {
     return d.unlimited
@@ -37,7 +42,7 @@ export function explainFinding(f: Finding, r: SecurityReport): string {
   const sym = r.token?.symbol ?? "tokens";
   const who = r.counterparty?.label ?? "this address";
   const amount =
-    r.decoded.kind !== "unknown" && r.token ? formatUnits(BigInt(r.decoded.amount_raw), r.token.decimals) : null;
+    (r.decoded.kind === "approve" || r.decoded.kind === "transfer") && r.token ? formatUnits(BigInt(r.decoded.amount_raw), r.token.decimals) : null;
 
   switch (f.rule_id) {
     case "UNLIMITED_ALLOWANCE":
@@ -64,5 +69,9 @@ export function explainFinding(f: Finding, r: SecurityReport): string {
       return "This goes to the “zero address” — nobody controls it, so anything sent there is gone for good.";
     case "UNSUPPORTED_CALL":
       return "We can't read what this transaction does. A good rule: never sign something you don't understand.";
+    case "NFT_APPROVAL_FOR_ALL":
+      return `You'd let ${who} move every NFT you own in this collection — today and in the future. This is one of the most common tricks used to drain NFT wallets.`;
+    case "APPROVAL_FOR_ALL_REVOKED":
+      return "This cancels a previous permission — that's a safe, healthy thing to do.";
   }
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpenText, ShieldAlert, Terminal } from "lucide-react";
+import { BookOpenText, Building2, ShieldAlert, Terminal } from "lucide-react";
 import { HeroVisual } from "@/components/HeroVisual";
 import { ExperienceCard } from "@/components/ExperienceCard";
 import { Sponsors } from "@/components/Sponsors";
@@ -65,6 +65,24 @@ export default function Home() {
             </span>
           </span>
           <span className="text-sm font-semibold text-violet">Open dashboard →</span>
+        </Link>
+      </div>
+
+      <div className="mx-auto mt-4 max-w-6xl px-4 sm:px-6">
+        <Link
+          href="/business"
+          className="glow-card flex flex-col items-start justify-between gap-3 rounded-2xl px-6 py-5 sm:flex-row sm:items-center"
+        >
+          <span className="flex items-center gap-3">
+            <Building2 className="text-gold" size={22} />
+            <span>
+              <span className="font-bold">Sentinel for Wallets</span>
+              <span className="block text-sm text-muted">
+                For wallet companies: test your wallet against real drainer techniques and get a prioritised fix list.
+              </span>
+            </span>
+          </span>
+          <span className="text-sm font-semibold text-gold">Run an audit →</span>
         </Link>
       </div>
 

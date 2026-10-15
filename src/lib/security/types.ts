@@ -26,7 +26,9 @@ export type RuleId =
   | "UNKNOWN_SPENDER"
   | "TRANSFER_AMOUNT"
   | "KNOWN_RECIPIENT"
-  | "UNKNOWN_RECIPIENT";
+  | "UNKNOWN_RECIPIENT"
+  | "NFT_APPROVAL_FOR_ALL"
+  | "APPROVAL_FOR_ALL_REVOKED";
 
 /** A transaction as a wallet would ask you to sign it. */
 export type TxInput = {
@@ -49,7 +51,15 @@ export type TokenInfo = {
 
 export type Decoded =
   | { kind: "transfer"; function: "transfer(address,uint256)"; selector: string; recipient: string; amount_raw: string }
-  | { kind: "approve"; function: "approve(address,uint256)"; selector: string; spender: string; amount_raw: string; unlimited: boolean }
+  | {
+      kind: "approve";
+      function: "approve(address,uint256)" | "increaseAllowance(address,uint256)";
+      selector: string;
+      spender: string;
+      amount_raw: string;
+      unlimited: boolean;
+    }
+  | { kind: "approval_for_all"; function: "setApprovalForAll(address,bool)"; selector: string; operator: string; approved: boolean }
   | { kind: "unknown"; selector: string | null };
 
 export type Finding = {
@@ -62,7 +72,7 @@ export type Finding = {
 };
 
 export type Counterparty = {
-  role: "spender" | "recipient";
+  role: "spender" | "recipient" | "operator";
   address: string;
   label: string | null;
 };
