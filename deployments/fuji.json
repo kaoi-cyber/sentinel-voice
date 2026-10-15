@@ -1,0 +1,8 @@
+{
+  "chainId": 43113,
+  "address": "0x896786725815499db333b2E34d26987Cfb2F4aa0",
+  "txHash": "0x7e4a3565dafdb495000d140e929dd30dc9c259235a0c0c8225bd75a265ac9d26",
+  "deployedAt": "2026-10-15T15:38:44.052Z",
+  "deployer": "0x5c9f01762b10fc868535394ae16bdb1c8b722329",
+  "compiler": "0.8.37+commit.f401782d.Emscripten.clang"
+}
