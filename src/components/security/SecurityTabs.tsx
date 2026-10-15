@@ -3,11 +3,12 @@ import Link from "next/link";
 const TABS = [
   { id: "transaction", href: "/security", label: "Transaction check" },
   { id: "supply", href: "/supply", label: "Token supply risk" },
+  { id: "guard", href: "/guard", label: "Agent payment guard" },
 ] as const;
 
 export function SecurityTabs({ active }: { active: (typeof TABS)[number]["id"] }) {
   return (
-    <nav aria-label="Sentinel checks" className="inline-flex rounded-xl border border-line bg-surface/60 p-1">
+    <nav aria-label="Sentinel checks" className="inline-flex flex-wrap rounded-xl border border-line bg-surface/60 p-1">
       {TABS.map((t) => (
         <Link
           key={t.id}

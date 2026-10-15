@@ -1,6 +1,6 @@
 // The deterministic security engine: same input → same findings, every time.
 // No AI here — the AI layer only explains what these rules produce.
-import { decodeCall, formatUnits, shortAddress, ZERO_ADDRESS } from "./abi";
+import { decodeCall, formatUnits, MAX_UINT256, shortAddress, ZERO_ADDRESS } from "./abi";
 import { FUJI, lookupLabel, lookupToken } from "./reputation";
 import type { Counterparty, Finding, RiskLevel, SecurityReport, TokenInfo, TxInput } from "./types";
 
@@ -102,7 +102,9 @@ export function analyze(
           rule_id: "UNLIMITED_ALLOWANCE",
           severity: "high",
           title: "Unlimited token approval",
-          evidence: `${decoded.function.split("(")[0]}() amount is ${decoded.amount_raw} (≥ 2^128), effectively unlimited ${symbol}.`,
+          evidence: `${decoded.function.split("(")[0]}() amount is ${
+            BigInt(decoded.amount_raw) === MAX_UINT256 ? "2^256−1 (the maximum possible)" : `${decoded.amount_raw} (≥ 2^128)`
+          }, effectively unlimited ${symbol}.`,
         });
       } else {
         add({

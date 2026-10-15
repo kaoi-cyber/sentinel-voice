@@ -46,6 +46,11 @@ Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/a
 - `detect.ts`: Sentinel reference detector for any signing request (tx via core engine; typed data/eth_sign/personal_sign/poisoning rules). Core engine now decodes increaseAllowance + setApprovalForAll.
 - `controls.ts` (10 weighted questions) + `report.ts` (score = 60% weighted drainer coverage + 40% controls − 2/false alarm; grade A–F; prioritised gaps). Schema `wallet-audit-1.0`, recordable on Avalanche. Always disclosed as a self-assessment, not a pentest; roadmap section explains the path to authorised AI-assisted pentesting.
 
+## Agent Payment Guard (U-topia, `/guard`, third tab on Security)
+- `src/lib/guard/engine.ts`: policy layer for AI-agent payments (per-payment limit, daily cap, ask-above, new recipients need OK, agents never grant permissions) + Sentinel drainer detection (`audit/detect.ts`). Verdict allow/ask/block with reasons; the agent's note is shown but never trusted.
+- `scenarios.ts`: simulated agent queue (8 intents) + trusted contacts. Activity log schema `payment-guard-1.0`, recordable on Avalanche.
+- U-topia/U-bot have NO public API (u.bot is a consumer AI assistant; U-topia = U-Pay/U-Card payments app launching at FLOW Summit). Always label as "designed for U-topia, integration pending developer access". `docs/ubot-quiz-prompt.md` = U-Code prompt for a companion quiz the user builds in u.bot.
+
 ## Product
 - One shared deterministic security engine; AI only *explains* its findings, never invents verdicts.
 - Layer 1 **VoiceGuard AI** (`/learn`): beginner education — crypto, wallets, volatility, tokenomics, scams; voice.

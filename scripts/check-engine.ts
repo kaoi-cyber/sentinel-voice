@@ -12,6 +12,8 @@ import { TEST_PACK } from "../src/lib/audit/testpack";
 import { detect } from "../src/lib/audit/detect";
 import { buildAuditReport } from "../src/lib/audit/report";
 import { CONTROLS } from "../src/lib/audit/controls";
+import { decide, DEFAULT_POLICY } from "../src/lib/guard/engine";
+import { AGENT_QUEUE, CONTACTS } from "../src/lib/guard/scenarios";
 
 let failed = 0;
 function expect(name: string, got: string, want: string) {
@@ -106,5 +108,16 @@ const noPermit = buildAuditReport({ company: "A", wallet: "W", results: { ...per
 expect("missing Permit warning → critical gap first", `${noPermit.gaps[0]?.severity}:${noPermit.gaps[0]?.title}`, "critical:No warning on EIP-2612 Permit signature");
 const noisy = buildAuditReport({ company: "A", wallet: "W", results: { ...perfect, "control-login": "clear_warning" }, answers: allYes });
 expect("false alarm counted", String(noisy.scores.false_alarms), "1");
+
+console.log("\nPayment Guard (agentic payments)");
+const want: Record<string, string> = { coffee: "allow", rent: "ask", ticket: "ask", refund: "block", savings: "block", checkout: "block", laptop: "block", lunch: "allow" };
+let spent = 0;
+for (const intent of AGENT_QUEUE) {
+  const d = decide(intent, DEFAULT_POLICY, CONTACTS, spent);
+  expect(`${intent.id} → ${d.reasons.map((r) => r.rule).join("+")}`, d.verdict, want[intent.id]);
+  if (d.verdict === "allow" && d.amountUsd) spent += d.amountUsd;
+}
+expect("daily cap blocks once spent", decide(AGENT_QUEUE[7], DEFAULT_POLICY, CONTACTS, 995).verdict, "block");
+expect("drain signal still blocks when permissions are allowed", decide(AGENT_QUEUE[3], { ...DEFAULT_POLICY, blockPermissions: false }, CONTACTS, 0).verdict, "block");
 
 process.exit(failed ? 1 : 0);
