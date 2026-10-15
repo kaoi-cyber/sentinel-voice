@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BookOpenText, Building2, ShieldAlert, Terminal } from "lucide-react";
-import { HeroVisual } from "@/components/HeroVisual";
+import { GREETING_ID, GREETING_TEXT, HeroVisual } from "@/components/HeroVisual";
+import { ListenButton } from "@/components/voice/ListenButton";
 import { ExperienceCard } from "@/components/ExperienceCard";
 import { Sponsors } from "@/components/Sponsors";
 import { Features } from "@/components/Features";
@@ -23,6 +24,7 @@ export default function Home() {
             <br />
             Protect every step.
           </p>
+          <ListenButton id={GREETING_ID} text={GREETING_TEXT} label="Hear VoiceGuard say it" className="mt-6" />
         </div>
         <HeroVisual />
       </section>
