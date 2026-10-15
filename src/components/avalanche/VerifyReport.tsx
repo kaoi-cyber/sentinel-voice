@@ -5,7 +5,6 @@ import { CheckCircle2, ClipboardPaste, Loader2, SearchCheck, XCircle, TriangleAl
 import { explorers, type OnchainRecord } from "@/lib/avalanche/chain";
 import { lookupRecord } from "@/lib/avalanche/useAvalanche";
 import { hashReport } from "@/lib/security/hash";
-import type { SecurityReport } from "@/lib/security/types";
 import { ExplorerLinks } from "./ExplorerLinks";
 
 type Result = {
@@ -26,10 +25,10 @@ export function VerifyReport({ currentJson }: { currentJson?: string }) {
   async function verify() {
     setError(null);
     setResult(null);
-    let report: SecurityReport;
+    let report: { schema_version?: string; report_hash?: string | null; verification_tx?: string | null };
     try {
       report = JSON.parse(text);
-      if (!report || typeof report !== "object" || report.schema_version !== "1.0") throw new Error();
+      if (!report || typeof report !== "object" || !["1.0", "supply-1.0"].includes(report.schema_version ?? "")) throw new Error();
     } catch {
       setError("That doesn't look like a Sentinel report. Paste the full JSON from “Copy JSON”.");
       return;

@@ -33,6 +33,12 @@ Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/a
 - Expert view: `RecordOnAvalanche` + `VerifyReport` (paste JSON → recompute SHA-256 → check registry; detects edits). Reports carry `generated_at`, so every analysis has a unique hash.
 - Explorers: Snowtrace testnet + subnets-test.avax.network/c-chain.
 
+## Supply risk (Tokenomist)
+- `/supply` (tab next to `/security`; `?token=<id>` auto-runs). Server-only key `TOKENOMIST_API_KEY` in `.env.local`, header `x-api-key`, base `https://api.tokenomist.ai`, v5 endpoints: token/list, allocations/{id}, unlock/events/{id}.
+- `src/lib/tokenomist/client.ts`: disk cache `.tokenomist-cache/` (6h), live-access check; falls back to FICTIONAL sample tokens (`samples.ts`: sample-nova high-risk, sample-steady low) — always labelled, never mixed with live data. As of 2026-10-16 the user's key returns 403 "not authorized" on every endpoint (account API access not enabled — ask the Tokenomist mentor).
+- `src/lib/supply/engine.ts`: deterministic rules + THRESHOLDS (unlock ≤30d & ≥5% mcap = high, insider-heavy unlock, low float <30%, insider concentration ≥40%, TBD ≥20%). Missing/stale/AI-listed/inconsistent data → unverified/insufficient, never "safe". Every finding cites `source_fields`. Report schema `supply-1.0` with `data_source.data_hash` (SHA-256 of raw Tokenomist data); recordable/verifiable on Avalanche like transaction reports.
+- Holder chart colors validated with the dataviz validator against the navy surface.
+
 ## Product
 - One shared deterministic security engine; AI only *explains* its findings, never invents verdicts.
 - Layer 1 **VoiceGuard AI** (`/learn`): beginner education — crypto, wallets, volatility, tokenomics, scams; voice.

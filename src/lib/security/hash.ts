@@ -1,4 +1,3 @@
-import type { SecurityReport } from "./types";
 
 /** JSON with object keys sorted, so the same report always produces the same bytes. */
 export function canonicalJson(value: unknown): string {
@@ -11,7 +10,7 @@ export function canonicalJson(value: unknown): string {
 }
 
 /** SHA-256 fingerprint of a report (excluding its own hash and verification fields). */
-export async function hashReport(report: SecurityReport): Promise<string> {
+export async function hashReport(report: object): Promise<string> {
   const body = canonicalJson({ ...report, report_hash: null, verification_tx: null });
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(body));
   return "0x" + Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");

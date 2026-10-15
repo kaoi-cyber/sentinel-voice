@@ -5,6 +5,9 @@ import { encodeCall, ZERO_ADDRESS } from "../src/lib/security/abi";
 import { KNOWN } from "../src/lib/security/reputation";
 import { answerQuestion } from "../src/lib/voiceguard/answer";
 import { getEntry, KNOWLEDGE } from "../src/lib/voiceguard/knowledge";
+import { analyzeSupply } from "../src/lib/supply/engine";
+import { SAMPLES } from "../src/lib/tokenomist/samples";
+import type { TokenomistSnapshot } from "../src/lib/tokenomist/types";
 
 let failed = 0;
 function expect(name: string, got: string, want: string) {
@@ -43,5 +46,40 @@ const asks: [string, string][] = [
 for (const [q, want] of asks) expect(`"${q}"`, answerQuestion(q).title, want);
 const broken = KNOWLEDGE.flatMap((e) => e.followUps.filter((id) => !getEntry(id)).map((id) => `${e.id} -> ${id}`));
 expect("all follow-up links exist", broken.join(", ") || "ok", "ok");
+
+console.log("\nSupply risk (Tokenomist)");
+const now = new Date("2026-10-16T00:00:00Z");
+const snap = (id: string, patch: Partial<TokenomistSnapshot> = {}): TokenomistSnapshot => ({
+  tokenId: id,
+  mode: "sample",
+  sampleReason: "test",
+  queryDate: now.toISOString(),
+  token: SAMPLES[id].token,
+  allocations: SAMPLES[id].allocations,
+  unlockEvents: SAMPLES[id].unlockEvents(now),
+  endpoints: [],
+  ...patch,
+});
+const supply = (s: TokenomistSnapshot) => analyzeSupply(s, { now, dataHash: "0x00" });
+const rules = (s: TokenomistSnapshot) => supply(s).findings.map((f) => f.rule_id).join(",");
+
+expect("NOVA (big insider unlock)", supply(snap("sample-nova")).risk_level, "high");
+for (const id of ["LARGE_UNLOCK_SOON", "INSIDER_HEAVY_UNLOCK", "INSIDER_CONCENTRATION", "LOW_FLOAT"])
+  expect(`NOVA flags ${id}`, String(rules(snap("sample-nova")).includes(id)), "true");
+expect("STDY (mostly unlocked)", supply(snap("sample-steady")).risk_level, "low");
+expect("unlock data unavailable → unverified, not safe", supply(snap("sample-steady", { unlockEvents: null })).risk_level, "unverified");
+const ai = snap("sample-steady");
+ai.allocations = { ...ai.allocations!, listedMethod: "AI" };
+expect("AI-listed data → unverified", supply(ai).risk_level, "unverified");
+const badData = snap("sample-steady");
+badData.allocations = { ...badData.allocations!, totalUnlockedAmount: badData.allocations!.maxSupply! * 2 };
+expect("numbers don't add up → insufficient", supply(badData).risk_level, "insufficient");
+expect("no allocation data → insufficient", supply(snap("sample-steady", { allocations: null })).risk_level, "insufficient");
+const stale = snap("sample-steady");
+stale.allocations = { ...stale.allocations!, lastUpdatedDate: "2025-01-01T00:00:00Z" };
+expect("stale data → unverified", supply(stale).risk_level, "unverified");
+const nova = supply(snap("sample-nova"));
+expect("NOVA next unlock in 9 days", String(nova.metrics.next_unlock?.days_away), "9");
+expect("NOVA holder groups sum to 100%", nova.metrics.holders.reduce((a, h) => a + h.percent, 0).toFixed(1), "100.0");
 
 process.exit(failed ? 1 : 0);

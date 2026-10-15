@@ -43,3 +43,6 @@ next-env.d.ts
 
 # generated ElevenLabs audio
 .voice-cache/
+
+# cached Tokenomist API responses
+.tokenomist-cache/
