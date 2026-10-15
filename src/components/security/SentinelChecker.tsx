@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Loader2, ScanSearch, Lightbulb } from "lucide-react";
 import { analyze } from "@/lib/security/engine";
@@ -13,18 +13,28 @@ import { ListenButton } from "@/components/voice/ListenButton";
 import { explainReport } from "@/lib/voiceguard/answer";
 import { replyToSpeech } from "@/lib/voice/scripts";
 
+const DEFAULT_SCENARIO = "unlimited-approval";
+
 export function SentinelChecker() {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(DEFAULT_SCENARIO);
   const [report, setReport] = useState<SecurityReport | null>(null);
   const [scanning, setScanning] = useState(false);
 
+  // Open with the headline example already checked, so the page is never empty.
+  // Runs after mount: the report's timestamp must be created in the browser, not on the server.
+  useEffect(() => {
+    const s = getScenario(DEFAULT_SCENARIO);
+    if (s) setReport(analyze(s.tx, { scenarioId: s.id, sample: true }));
+  }, []);
+
+  // Picking a card checks it straight away.
   function select(id: string) {
     setSelected(id);
-    setReport(null);
+    run(id);
   }
 
-  function run() {
-    const scenario = getScenario(selected);
+  function run(id = selected) {
+    const scenario = getScenario(id);
     if (!scenario) return;
     setScanning(true);
     setReport(null);
@@ -41,12 +51,12 @@ export function SentinelChecker() {
 
       <button
         type="button"
-        onClick={run}
+        onClick={() => run()}
         disabled={!selected || scanning}
         className="inline-flex items-center gap-2 rounded-xl bg-violet px-5 py-3 font-semibold text-white transition hover:bg-violet/85 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {scanning ? <Loader2 size={18} className="animate-spin" /> : <ScanSearch size={18} />}
-        {scanning ? "Checking…" : "Check this transaction"}
+        {scanning ? "Checking…" : "Check again"}
       </button>
 
       {report && <BeginnerReport report={report} />}
