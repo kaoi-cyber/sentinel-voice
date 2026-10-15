@@ -16,7 +16,7 @@ export function elevenLabsConfig(): ElevenLabsConfig | null {
   return {
     key,
     voiceId: process.env.ELEVENLABS_VOICE_ID?.trim() || "JBFqnCBsd6RMkjVDRZzb",
-    ttsModel: process.env.ELEVENLABS_TTS_MODEL?.trim() || "eleven_multilingual_v2",
+    ttsModel: process.env.ELEVENLABS_TTS_MODEL?.trim() || "eleven_flash_v2_5",
     sttModel: process.env.ELEVENLABS_STT_MODEL?.trim() || "scribe_v2",
   };
 }

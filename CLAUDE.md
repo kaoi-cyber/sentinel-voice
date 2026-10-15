@@ -20,7 +20,7 @@ Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/a
 
 ## Voice (ElevenLabs)
 - Key lives only in `.env.local` (git-ignored; template in `.env.example`). Never ask the user to paste keys in chat.
-- Server routes: `src/app/api/voice/{status,speak,transcribe}` → ElevenLabs TTS (`eleven_multilingual_v2`) and STT (`scribe_v2`). Speak retries with the account's first voice if the default voice 404s.
+- Server routes: `src/app/api/voice/{status,speak,transcribe}` → ElevenLabs TTS (`eleven_flash_v2_5`, cached on disk in `.voice-cache/`) and STT (`scribe_v2`). Speak retries with the account's first voice if the default voice 404s.
 - Client: `src/lib/voice/player.ts` (single shared speaker, falls back to browser speechSynthesis), `useVoiceInput.ts` (MediaRecorder → transcribe; falls back to Web Speech API), `scripts.ts` (spoken text). `ListenButton` shows "Voice by ElevenLabs" only when ElevenLabs actually played.
 
 ## Product

@@ -1,3 +1,6 @@
+import { createHash } from "node:crypto";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { NextResponse } from "next/server";
 import { ELEVENLABS_API, elevenLabsConfig, elevenLabsError } from "@/lib/voice/elevenlabs";
 
@@ -5,6 +8,11 @@ import { ELEVENLABS_API, elevenLabsConfig, elevenLabsError } from "@/lib/voice/e
 const MAX_CHARS = 2500;
 
 let fallbackVoiceId: string | null = null;
+
+// Generated audio is saved here (git-ignored) so repeating an answer costs no credits
+// and still plays if the internet drops during the demo.
+const CACHE_DIR = path.join(process.cwd(), ".voice-cache");
+const AUDIO_HEADERS = { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" };
 
 async function firstAvailableVoice(key: string): Promise<string | null> {
   const res = await fetch(`${ELEVENLABS_API}/voices`, { headers: { "xi-api-key": key } });
@@ -30,13 +38,24 @@ export async function POST(req: Request) {
       body: JSON.stringify({ text, model_id: cfg.ttsModel }),
     });
 
-  let res = await tts(fallbackVoiceId ?? cfg.voiceId);
+  const voiceId = fallbackVoiceId ?? cfg.voiceId;
+  const cacheFile = path.join(CACHE_DIR, createHash("sha256").update(`${voiceId}|${cfg.ttsModel}|${text}`).digest("hex") + ".mp3");
+  const cached = await readFile(cacheFile).catch(() => null);
+  if (cached) return new Response(new Uint8Array(cached), { headers: AUDIO_HEADERS });
+
+  let res = await tts(voiceId);
   // The default voice may not exist on every account — retry once with the account's first voice.
   if (res.status === 404 && !fallbackVoiceId) {
     fallbackVoiceId = await firstAvailableVoice(cfg.key);
     if (fallbackVoiceId) res = await tts(fallbackVoiceId);
   }
-  if (!res.ok || !res.body) return NextResponse.json({ error: await elevenLabsError(res) }, { status: 502 });
+  if (!res.ok) return NextResponse.json({ error: await elevenLabsError(res) }, { status: 502 });
 
-  return new Response(res.body, { headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" } });
+  const audio = new Uint8Array(await res.arrayBuffer());
+  // Only cache under the voice that was actually used.
+  if (voiceId === (fallbackVoiceId ?? cfg.voiceId)) {
+    await mkdir(CACHE_DIR, { recursive: true });
+    await writeFile(cacheFile, audio).catch(() => undefined);
+  }
+  return new Response(audio, { headers: AUDIO_HEADERS });
 }
