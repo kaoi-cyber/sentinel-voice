@@ -89,12 +89,20 @@ function BeginnerReport({ report }: { report: SecurityReport }) {
         </div>
       </details>
 
-      <Link
-        href={`/expert?scenario=${report.scenario_id ?? ""}`}
-        className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-violet hover:text-violet/80"
-      >
-        See the technical evidence <ArrowRight size={16} />
-      </Link>
+      <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3">
+        <Link
+          href={`/learn?explain=${report.scenario_id ?? ""}`}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-blue hover:text-blue/80"
+        >
+          Ask VoiceGuard to explain this <ArrowRight size={16} />
+        </Link>
+        <Link
+          href={`/expert?scenario=${report.scenario_id ?? ""}`}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-violet hover:text-violet/80"
+        >
+          See the technical evidence <ArrowRight size={16} />
+        </Link>
+      </div>
     </article>
   );
 }
