@@ -18,6 +18,11 @@ Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/a
 - `src/lib/voiceguard/knowledge.ts`: prepared, reviewed Q&A (no live LLM — chosen for demo reliability). `answer.ts`: keyword matching, investment-advice guardrail, fallback, and `explainReport()` for Sentinel results.
 - UI: `src/components/voiceguard/VoiceGuardChat.tsx` on `/learn`; `/learn?explain=<scenario-id>` opens with that explanation.
 
+## Voice (ElevenLabs)
+- Key lives only in `.env.local` (git-ignored; template in `.env.example`). Never ask the user to paste keys in chat.
+- Server routes: `src/app/api/voice/{status,speak,transcribe}` → ElevenLabs TTS (`eleven_multilingual_v2`) and STT (`scribe_v2`). Speak retries with the account's first voice if the default voice 404s.
+- Client: `src/lib/voice/player.ts` (single shared speaker, falls back to browser speechSynthesis), `useVoiceInput.ts` (MediaRecorder → transcribe; falls back to Web Speech API), `scripts.ts` (spoken text). `ListenButton` shows "Voice by ElevenLabs" only when ElevenLabs actually played.
+
 ## Product
 - One shared deterministic security engine; AI only *explains* its findings, never invents verdicts.
 - Layer 1 **VoiceGuard AI** (`/learn`): beginner education — crypto, wallets, volatility, tokenomics, scams; voice.

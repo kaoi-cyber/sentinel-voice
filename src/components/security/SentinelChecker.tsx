@@ -9,6 +9,9 @@ import { RISK_COPY, describeAction, explainFinding, sortFindings } from "@/lib/s
 import type { SecurityReport } from "@/lib/security/types";
 import { ScenarioPicker } from "./ScenarioPicker";
 import { RiskBadge, severityDot } from "./RiskBadge";
+import { ListenButton } from "@/components/voice/ListenButton";
+import { explainReport } from "@/lib/voiceguard/answer";
+import { replyToSpeech } from "@/lib/voice/scripts";
 
 export function SentinelChecker() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -59,6 +62,7 @@ function BeginnerReport({ report }: { report: SecurityReport }) {
         {report.sample_data && (
           <span className="rounded-full border border-line px-3 py-1 text-xs text-muted">Sample transaction</span>
         )}
+        <ListenButton id={`sentinel-${report.scenario_id}`} text={replyToSpeech(explainReport(report))} label="Explain it to me" />
       </div>
       <h2 className="mt-4 text-2xl font-extrabold tracking-tight">{RISK_COPY[report.risk_level].headline}</h2>
       <p className="mt-2 text-lg text-text/90">{describeAction(report)}</p>

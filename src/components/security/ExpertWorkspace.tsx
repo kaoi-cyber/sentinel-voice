@@ -10,6 +10,8 @@ import { hashReport } from "@/lib/security/hash";
 import { encodeCall, MAX_UINT256 } from "@/lib/security/abi";
 import { FUJI, KNOWN } from "@/lib/security/reputation";
 import type { SecurityReport, TxInput } from "@/lib/security/types";
+import { ListenButton } from "@/components/voice/ListenButton";
+import { expertSummary } from "@/lib/voice/scripts";
 import { ScenarioPicker } from "./ScenarioPicker";
 import { RiskBadge, SeverityPill } from "./RiskBadge";
 
@@ -87,6 +89,7 @@ function ExpertReport({ report }: { report: SecurityReport }) {
             {report.findings.length} findings · {report.findings.filter((f) => f.severity === "high").length} high
           </span>
           {report.sample_data && <span className="rounded-full border border-line px-3 py-1 text-xs text-muted">Sample data</span>}
+          <ListenButton id={`expert-${report.scenario_id ?? "custom"}`} text={expertSummary(report)} label="Spoken summary" />
         </div>
         <span className="font-mono text-xs text-muted">{report.chain.name} · chainId {report.chain.chain_id}</span>
       </div>

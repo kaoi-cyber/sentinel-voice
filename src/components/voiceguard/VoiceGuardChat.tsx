@@ -2,14 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ScanSearch, SendHorizontal, ShieldCheck } from "lucide-react";
+import { Loader2, Mic, ScanSearch, SendHorizontal, ShieldCheck, Square } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
 import { analyze } from "@/lib/security/engine";
 import { getScenario, SCENARIOS } from "@/lib/security/scenarios";
 import { answerQuestion, explainReport, followUpQuestion, fromEntry, type GuideReply } from "@/lib/voiceguard/answer";
 import { getEntry, KNOWLEDGE, TOPICS } from "@/lib/voiceguard/knowledge";
+import { ListenButton, VoiceEngineTag } from "@/components/voice/ListenButton";
+import { player } from "@/lib/voice/player";
+import { replyToSpeech } from "@/lib/voice/scripts";
+import { useVoiceInput } from "@/lib/voice/useVoiceInput";
 
-type Message = { id: number; role: "user"; text: string } | { id: number; role: "guide"; reply: GuideReply };
+type Message = { id: number; role: "user"; text: string; voice?: boolean } | { id: number; role: "guide"; reply: GuideReply };
 
 const GREETING: GuideReply = {
   kind: "knowledge",
@@ -46,11 +50,19 @@ export function VoiceGuardChat() {
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages.length]);
 
-  function push(userText: string, reply: GuideReply) {
+  function push(userText: string, reply: GuideReply, voice = false): number {
     const id = nextId.current;
     nextId.current += 2;
-    setMessages((m) => [...m, { id, role: "user", text: userText }, { id: id + 1, role: "guide", reply }]);
+    setMessages((m) => [...m, { id, role: "user", text: userText, voice }, { id: id + 1, role: "guide", reply }]);
+    return id + 1;
   }
+
+  // Spoken question → transcript shown as the user's message → answer read aloud.
+  const voice = useVoiceInput((text) => {
+    const reply = answerQuestion(text);
+    const guideId = push(text, reply, true);
+    void player.play(`msg-${guideId}`, replyToSpeech(reply));
+  });
 
   function askText(text: string) {
     const t = text.trim();
@@ -75,11 +87,16 @@ export function VoiceGuardChat() {
         <div ref={threadRef} className="h-[28rem] space-y-5 overflow-y-auto p-5 sm:h-[34rem] sm:p-6" aria-live="polite">
           {messages.map((m) =>
             m.role === "user" ? (
-              <div key={m.id} className="flex justify-end">
+              <div key={m.id} className="flex flex-col items-end gap-1">
                 <p className="max-w-[85%] rounded-2xl rounded-br-md bg-blue px-4 py-2.5 text-white">{m.text}</p>
+                {m.voice && (
+                  <span className="flex items-center gap-1 text-[11px] text-muted">
+                    <Mic size={11} /> Transcribed from your voice
+                  </span>
+                )}
               </div>
             ) : (
-              <GuideBubble key={m.id} reply={m.reply} onFollowUp={askEntry} />
+              <GuideBubble key={m.id} id={`msg-${m.id}`} reply={m.reply} onFollowUp={askEntry} />
             ),
           )}
         </div>
@@ -91,10 +108,35 @@ export function VoiceGuardChat() {
             askText(draft);
           }}
         >
+          <button
+            type="button"
+            onClick={voice.toggle}
+            disabled={!voice.ready || voice.state === "transcribing"}
+            aria-label={voice.state === "recording" ? "Stop recording" : "Ask with your voice"}
+            className={`flex w-12 shrink-0 items-center justify-center rounded-xl border transition disabled:opacity-40 ${
+              voice.state === "recording"
+                ? "animate-pulse border-danger bg-danger/20 text-danger"
+                : "border-line text-muted hover:border-blue/60 hover:text-text"
+            }`}
+          >
+            {voice.state === "transcribing" ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : voice.state === "recording" ? (
+              <Square size={16} />
+            ) : (
+              <Mic size={18} />
+            )}
+          </button>
           <input
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Ask about crypto, wallets, scams…"
+            placeholder={
+              voice.state === "recording"
+                ? "Listening… tap the square when you're done"
+                : voice.state === "transcribing"
+                  ? "Transcribing…"
+                  : "Ask about crypto, wallets, scams…"
+            }
             aria-label="Your question"
             className="min-w-0 flex-1 rounded-xl border border-line bg-ink/70 px-4 py-3 text-text outline-none placeholder:text-muted focus:border-blue"
           />
@@ -107,6 +149,10 @@ export function VoiceGuardChat() {
             <span className="hidden sm:inline">Ask</span>
           </button>
         </form>
+        <div className="flex flex-wrap items-center justify-between gap-2 px-4 pb-3 text-[11px]">
+          {voice.error ? <span className="text-danger">{voice.error}</span> : <span className="text-muted">Tap the mic and ask out loud.</span>}
+          {voice.ready && <VoiceEngineTag engine={voice.engine} />}
+        </div>
       </div>
 
       <aside className="space-y-6">
@@ -156,7 +202,7 @@ export function VoiceGuardChat() {
   );
 }
 
-function GuideBubble({ reply, onFollowUp }: { reply: GuideReply; onFollowUp: (id: string) => void }) {
+function GuideBubble({ id, reply, onFollowUp }: { id: string; reply: GuideReply; onFollowUp: (id: string) => void }) {
   return (
     <div className="flex gap-3">
       <LogoMark className="h-8 w-8 shrink-0" />
@@ -187,6 +233,7 @@ function GuideBubble({ reply, onFollowUp }: { reply: GuideReply; onFollowUp: (id
             ))}
           </ul>
         )}
+        <ListenButton id={id} text={replyToSpeech(reply)} className="mt-3" />
         {reply.followUps.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
             {reply.followUps.map((id) => (
