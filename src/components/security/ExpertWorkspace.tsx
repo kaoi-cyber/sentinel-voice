@@ -61,8 +61,7 @@ export function ExpertWorkspace() {
         </form>
       )}
 
-      {report && <ExpertReport key={report.generated_at} report={report} />}
-      <VerifyReport />
+      {report ? <ExpertReport key={report.generated_at} report={report} /> : <VerifyReport />}
     </div>
   );
 }
@@ -192,6 +191,8 @@ function ExpertReport({ report }: { report: SecurityReport }) {
           {json}
         </pre>
       </Panel>
+
+      <VerifyReport currentJson={hash ? json : undefined} />
     </div>
   );
 }

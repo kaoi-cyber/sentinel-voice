@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Loader2, SearchCheck, XCircle, TriangleAlert } from "lucide-react";
+import { CheckCircle2, ClipboardPaste, Loader2, SearchCheck, XCircle, TriangleAlert } from "lucide-react";
 import { explorers, type OnchainRecord } from "@/lib/avalanche/chain";
 import { lookupRecord } from "@/lib/avalanche/useAvalanche";
 import { hashReport } from "@/lib/security/hash";
@@ -17,7 +17,7 @@ type Result = {
 };
 
 /** Paste any report JSON → recompute its fingerprint → check the Fuji registry. */
-export function VerifyReport() {
+export function VerifyReport({ currentJson }: { currentJson?: string }) {
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,8 +58,21 @@ export function VerifyReport() {
         Paste a report&apos;s JSON. We recompute its SHA-256 fingerprint and check it against the registry on Avalanche
         Fuji. Change even one character and the fingerprint won&apos;t match.
       </p>
+      {currentJson && (
+        <button
+          type="button"
+          onClick={() => {
+            setText(currentJson);
+            setResult(null);
+            setError(null);
+          }}
+          className="mt-3 inline-flex items-center gap-2 rounded-xl border border-violet/60 px-4 py-2 text-sm font-semibold text-text transition hover:bg-violet/10"
+        >
+          <ClipboardPaste size={16} /> Paste this report
+        </button>
+      )}
       <textarea
-        rows={5}
+        rows={12}
         value={text}
         onChange={(e) => setText(e.target.value)}
         spellCheck={false}
