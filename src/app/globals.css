@@ -1,26 +1,87 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Palette taken from the U-Hackathon 2026 poster: deep navy, electric blue,
+   violet, with a gold highlight. */
+@theme {
+  --color-ink: #060a18;
+  --color-surface: #0d1430;
+  --color-surface-2: #131c3f;
+  --color-line: #222d5a;
+  --color-text: #e8eeff;
+  --color-muted: #94a0c8;
+  --color-blue: #4f7cff;
+  --color-violet: #8b5cf6;
+  --color-gold: #edb541;
+  --color-safe: #34d399;
+  --color-danger: #f87171;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: var(--color-text);
+}
+
+/* Soft star-field + glow behind every page */
+.backdrop {
+  background:
+    radial-gradient(60rem 40rem at 15% -10%, rgb(79 124 255 / 0.18), transparent 60%),
+    radial-gradient(50rem 35rem at 95% 10%, rgb(139 92 246 / 0.16), transparent 60%),
+    radial-gradient(1px 1px at 20% 30%, rgb(255 255 255 / 0.5), transparent),
+    radial-gradient(1px 1px at 70% 60%, rgb(255 255 255 / 0.35), transparent),
+    radial-gradient(1px 1px at 40% 80%, rgb(255 255 255 / 0.3), transparent),
+    radial-gradient(1px 1px at 85% 25%, rgb(255 255 255 / 0.4), transparent),
+    var(--color-ink);
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #8fb0ff, #b79bff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glow-card {
+  background: linear-gradient(180deg, rgb(19 28 63 / 0.9), rgb(13 20 48 / 0.9));
+  border: 1px solid var(--color-line);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.glow-card:hover {
+  border-color: rgb(79 124 255 / 0.6);
+  box-shadow: 0 0 40px -10px rgb(79 124 255 / 0.5);
+  transform: translateY(-2px);
+}
+.glow-card.violet:hover {
+  border-color: rgb(139 92 246 / 0.6);
+  box-shadow: 0 0 40px -10px rgb(139 92 246 / 0.5);
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.85); opacity: 0.7; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+.pulse-ring {
+  animation: pulse-ring 2.8s ease-out infinite;
+}
+.pulse-ring.delay {
+  animation-delay: 1.4s;
+}
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+.wave-bar {
+  transform-origin: center;
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-ring, .wave-bar { animation: none; }
 }
