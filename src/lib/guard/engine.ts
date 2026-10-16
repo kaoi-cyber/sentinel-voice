@@ -27,11 +27,20 @@ export const DEFAULT_POLICY: Policy = {
 
 export type Contact = { address: string; label: string };
 
+/** What the engine reads from a request — precomputed on the public demo, which carries no payloads. */
+export type IntentFacts = {
+  kind: "payment" | "permission" | "other";
+  amountUsd: number | null;
+  recipient: string | null;
+  drainSignals: { rule_id: string; evidence: string }[];
+};
+
 export type PaymentIntent = {
   id: string;
   /** What the agent says it's doing — shown to the user, never trusted by the rules. */
   agentNote: string;
   request: SigningRequest;
+  precomputed?: IntentFacts;
 };
 
 export type Verdict = "allow" | "ask" | "block";
@@ -65,14 +74,22 @@ function describe(req: SigningRequest): { amountUsd: number | null; recipient: s
 
 const usd = (n: number) => `$${n.toLocaleString("en-US", { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 })}`;
 
+/** Reads a request with Sentinel's detector (the full app) — the facts every rule below uses. */
+export function intentFacts(intent: PaymentIntent, contacts: Contact[]): IntentFacts {
+  if (intent.precomputed) return intent.precomputed;
+  const { amountUsd, recipient, kind } = describe(intent.request);
+  // Sentinel's drainer detection — the same engine used in the wallet audit.
+  const sentinel = detect(intent.request, contacts.map((c) => c.address));
+  const drainSignals = sentinel.findings.filter((f) => f.severity === "high").map((f) => ({ rule_id: f.rule_id, evidence: f.evidence }));
+  return { kind, amountUsd, recipient, drainSignals };
+}
+
 export function decide(intent: PaymentIntent, policy: Policy, contacts: Contact[], spentTodayUsd: number): Decision {
   const reasons: Reason[] = [];
-  const { amountUsd, recipient, kind } = describe(intent.request);
+  const { amountUsd, recipient, kind, drainSignals } = intentFacts(intent, contacts);
   const contact = recipient ? contacts.find((c) => c.address.toLowerCase() === recipient.toLowerCase()) : undefined;
 
-  // 1. Sentinel's drainer detection — the same engine used in the wallet audit.
-  const sentinel = detect(intent.request, contacts.map((c) => c.address));
-  const drainSignals = sentinel.findings.filter((f) => f.severity === "high");
+  // 1. Drain signals block outright.
   for (const f of drainSignals) reasons.push({ rule: f.rule_id, verdict: "block", text: f.evidence });
 
   // 2. Agents may move money, not hand out permissions.

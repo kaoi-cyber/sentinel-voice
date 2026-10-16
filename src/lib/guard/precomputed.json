@@ -1,0 +1,65 @@
+{
+  "coffee": {
+    "kind": "payment",
+    "amountUsd": 4.5,
+    "recipient": "0x2c4e6a8b0d1f3e5a7c9b1d3f5e7a9c0b2d4f6e81",
+    "drainSignals": []
+  },
+  "rent": {
+    "kind": "payment",
+    "amountUsd": 450,
+    "recipient": "0x8d1f2e3c4b5a69788766554433221100ffeeddcc",
+    "drainSignals": []
+  },
+  "ticket": {
+    "kind": "payment",
+    "amountUsd": 85,
+    "recipient": "0x5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f",
+    "drainSignals": []
+  },
+  "refund": {
+    "kind": "permission",
+    "amountUsd": null,
+    "recipient": null,
+    "drainSignals": [
+      {
+        "rule_id": "UNLIMITED_ALLOWANCE",
+        "evidence": "approve() amount is 2^256−1 (the maximum possible), effectively unlimited USDC."
+      }
+    ]
+  },
+  "savings": {
+    "kind": "payment",
+    "amountUsd": 200,
+    "recipient": "0x3b9f00c0ffee11d0ab22be33ef4455aa66bb8b9c",
+    "drainSignals": [
+      {
+        "rule_id": "ADDRESS_POISONING",
+        "evidence": "Recipient 0x3b9f…8b9c imitates recent address 0x3b9f…8b9c (same first and last characters)."
+      }
+    ]
+  },
+  "checkout": {
+    "kind": "permission",
+    "amountUsd": null,
+    "recipient": null,
+    "drainSignals": [
+      {
+        "rule_id": "PERMIT2_SIGNATURE",
+        "evidence": "Permit2 PermitSingle lets 0x4e8f…0e2f pull an unlimited amount of token 0x5f0e…5e4f."
+      }
+    ]
+  },
+  "laptop": {
+    "kind": "payment",
+    "amountUsd": 799,
+    "recipient": "0x2c4e6a8b0d1f3e5a7c9b1d3f5e7a9c0b2d4f6e81",
+    "drainSignals": []
+  },
+  "lunch": {
+    "kind": "payment",
+    "amountUsd": 12.8,
+    "recipient": "0x2c4e6a8b0d1f3e5a7c9b1d3f5e7a9c0b2d4f6e81",
+    "drainSignals": []
+  }
+}

@@ -12,7 +12,8 @@
     "compile:contract": "tsx scripts/compile-contract.ts",
     "check:contract": "tsx scripts/check-contract.ts",
     "fetch:prices": "tsx scripts/fetch-prices.ts",
-    "voice:pack": "tsx scripts/build-voice-pack.ts"
+    "voice:pack": "tsx scripts/build-voice-pack.ts",
+    "guard:precompute": "tsx scripts/precompute-guard.ts"
   },
   "dependencies": {
     "lucide-react": "^1.57.0",

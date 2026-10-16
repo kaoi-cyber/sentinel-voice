@@ -12,7 +12,8 @@ import { TEST_PACK } from "../src/lib/audit/testpack";
 import { detect } from "../src/lib/audit/detect";
 import { buildAuditReport } from "../src/lib/audit/report";
 import { CONTROLS } from "../src/lib/audit/controls";
-import { decide, DEFAULT_POLICY } from "../src/lib/guard/engine";
+import { decide, DEFAULT_POLICY, intentFacts } from "../src/lib/guard/engine";
+import precomputedFacts from "../src/lib/guard/precomputed.json";
 import { AGENT_QUEUE, CONTACTS } from "../src/lib/guard/scenarios";
 
 let failed = 0;
@@ -116,6 +117,12 @@ for (const intent of AGENT_QUEUE) {
   const d = decide(intent, DEFAULT_POLICY, CONTACTS, spent);
   expect(`${intent.id} → ${d.reasons.map((r) => r.rule).join("+")}`, d.verdict, want[intent.id]);
   if (d.verdict === "allow" && d.amountUsd) spent += d.amountUsd;
+}
+// The public demo's precomputed facts must equal what the detector reads today.
+for (const intent of AGENT_QUEUE) {
+  const live = JSON.stringify(intentFacts(intent, CONTACTS));
+  const stored = JSON.stringify((precomputedFacts as Record<string, unknown>)[intent.id]);
+  expect(`precomputed facts up to date: ${intent.id}`, String(live === stored), "true");
 }
 expect("daily cap blocks once spent", decide(AGENT_QUEUE[7], DEFAULT_POLICY, CONTACTS, 995).verdict, "block");
 expect("drain signal still blocks when permissions are allowed", decide(AGENT_QUEUE[3], { ...DEFAULT_POLICY, blockPermissions: false }, CONTACTS, 0).verdict, "block");
