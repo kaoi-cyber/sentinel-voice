@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Sentinel Voice logo">
+  <defs>
+    <linearGradient id="sv-shield" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f7cff"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="sv-inner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#131c3f"/>
+      <stop offset="1" stop-color="#060a18"/>
+    </linearGradient>
+    <filter id="sv-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- outer shield -->
+  <path d="M256 28 L444 98 V236 C444 356 364 446 256 486 C148 446 68 356 68 236 V98 Z" fill="url(#sv-shield)" filter="url(#sv-glow)"/>
+  <!-- inner shield -->
+  <path d="M256 62 L414 121 V238 C414 340 347 417 256 452 C165 417 98 340 98 238 V121 Z" fill="url(#sv-inner)"/>
+  <!-- voice waves (gold) -->
+  <g fill="none" stroke="#edb541" stroke-width="16" stroke-linecap="round">
+    <path d="M150 196 C128 222 128 268 150 294"/>
+    <path d="M362 196 C384 222 384 268 362 294"/>
+  </g>
+  <g fill="none" stroke="#edb541" stroke-width="12" stroke-linecap="round" opacity="0.55">
+    <path d="M118 170 C84 212 84 278 118 320"/>
+    <path d="M394 170 C428 212 428 278 394 320"/>
+  </g>
+  <!-- microphone -->
+  <rect x="216" y="134" width="80" height="148" rx="40" fill="#e8eeff"/>
+  <path d="M186 244 C186 300 218 330 256 330 C294 330 326 300 326 244" fill="none" stroke="#e8eeff" stroke-width="18" stroke-linecap="round"/>
+  <path d="M256 330 V372 M222 384 H290" fill="none" stroke="#e8eeff" stroke-width="18" stroke-linecap="round"/>
+  <!-- grill accent -->
+  <path d="M236 182 H276 M236 210 H276" stroke="#8b5cf6" stroke-width="10" stroke-linecap="round"/>
+</svg>
