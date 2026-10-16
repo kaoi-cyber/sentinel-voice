@@ -12,8 +12,8 @@ Web3 (Track 02) — the product is deployed on-chain: our report registry contra
 ## Tagline (one line)
 The safety layer for people entering crypto: learn by voice, check before you sign, and prove every report on Avalanche.
 
-## Short description (~50 words)
-Sentinel Voice helps newcomers enter crypto safely. VoiceGuard teaches by voice (ElevenLabs). Sentinel checks transactions, token supply risk and AI-agent payments before anyone signs, using fixed rules with visible evidence. Sentinel for Wallets tests wallet apps against real drainer techniques. Every report can be sealed on Avalanche, so nobody can quietly edit a warning.
+## Short description (max 280 characters — this one is 255)
+Sentinel Voice is a safety layer for people entering crypto. VoiceGuard teaches by voice (ElevenLabs). Sentinel checks transactions, token risk and AI-agent payments before you sign, and tests wallets against drainers. Every report is sealed on Avalanche.
 
 ## Full description
 **Problem.** Newcomers lose money because they sign things they don't understand — unlimited approvals, gasless "permit" signatures, look-alike addresses — and fraud has made many people distrust crypto altogether.

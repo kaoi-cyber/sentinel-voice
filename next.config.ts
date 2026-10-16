@@ -8,6 +8,8 @@ const basePath = isStatic ? "/sentinel-voice" : "";
 
 const nextConfig: NextConfig = {
   env: { NEXT_PUBLIC_BASE_PATH: basePath },
+  // No Next.js dev badge in the corner (cleaner demos and screenshots).
+  devIndicators: false,
   ...(isStatic
     ? { output: "export", distDir: ".next-static", basePath, trailingSlash: true, images: { unoptimized: true } }
     : {}),
