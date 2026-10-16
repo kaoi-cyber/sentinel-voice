@@ -99,7 +99,7 @@ export function MarketHistory() {
         </tbody>
       </table>
       <p className="mt-3 text-xs text-muted">
-        * partial year. Source: {PRICE_SOURCE.source}, fetched {new Date(PRICE_SOURCE.fetched_at).toLocaleDateString()}. {PRICE_SOURCE.note} Month-end
+        * partial year. Source: {PRICE_SOURCE.source}, fetched {new Date(PRICE_SOURCE.fetched_at).toLocaleDateString("en-US", { dateStyle: "medium", timeZone: "UTC" })}. {PRICE_SOURCE.note} Month-end
         prices hide even deeper drops inside the month. Past performance tells you how bumpy the ride has been — not where it goes next.
       </p>
     </div>
