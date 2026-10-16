@@ -126,7 +126,7 @@ export function VoiceGuardChat() {
                 ? "Listening… tap the square when you're done"
                 : voice.state === "transcribing"
                   ? "Transcribing…"
-                  : "Ask about crypto, wallets, scams…"
+                  : "Ask about crypto, wallets, staying safe…"
             }
             aria-label="Your question"
             className="min-w-0 flex-1 rounded-xl border border-line bg-ink/70 px-4 py-3 text-text outline-none placeholder:text-muted focus:border-blue"

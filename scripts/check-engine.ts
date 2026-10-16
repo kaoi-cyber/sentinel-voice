@@ -40,7 +40,7 @@ console.log("\nVoiceGuard");
 const asks: [string, string][] = [
   ["What is Bitcoin?", "What is Bitcoin?"],
   ["what's a seed phrase", "What is a seed phrase and how do I keep it safe?"],
-  ["is this airdrop a scam?", "Is a free airdrop safe to claim?"],
+  ["is this airdrop fake?", "Is a free airdrop safe to claim?"],
   ["why is unlimited approval bad", "Why is an unlimited approval risky?"],
   ["how do I revoke an approval", "How do I cancel (revoke) an approval?"],
   ["what are token unlocks", "What are token unlocks?"],

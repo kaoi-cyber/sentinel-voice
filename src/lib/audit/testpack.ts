@@ -146,7 +146,7 @@ export const TEST_PACK: TestCase[] = [
     kind: "attack",
     weight: 2,
     technique: "transfer() to an address matching the first & last characters of a saved address",
-    howItDrains: "Scammers plant look-alike addresses in the user's history; users copy the wrong one and send funds to the attacker.",
+    howItDrains: "Attackers plant look-alike addresses in the user's history; users copy the wrong one and send funds to the attacker.",
     walletShould: "Detect recipients that resemble a saved/recent address but differ, and warn before sending.",
     request: tx(encodeCall("transfer", POISONED, 1_000_000_000n)),
     recentAddresses: [KNOWN.savings],

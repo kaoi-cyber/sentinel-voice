@@ -297,6 +297,6 @@ function recommend(findings: SupplyFinding[], risk: RiskLevel, next: SupplyRepor
   if (risk === "unverified")
     return "Part of this token's supply picture couldn't be verified. Treat the gaps as unknowns, not as safe, and check the project's official vesting schedule.";
   if (risk === "medium")
-    return `${symbol} has supply-side risks worth understanding — see the flagged items. None means the price will fall, but they can add selling pressure over time.`;
+    return `${symbol} has supply-side risks worth understanding — see the flagged items. None of them predicts the price, but they can add selling pressure over time.`;
   return `No major supply-pressure signals found for ${symbol} in the next ${THRESHOLDS.unlock_window_days} days. Supply is only one part of risk — this says nothing about price or smart-contract safety.`;
 }

@@ -19,7 +19,7 @@ const CHECKLIST = [
 
 const SAVINGS_RULES = [
   { title: "Emergency fund first", text: "Keep several months of expenses in ordinary savings before putting money into crypto." },
-  { title: "Only what you can leave alone", text: "History shows falls of 75–95%. Only save money you won't need for years." },
+  { title: "Only what you can leave alone", text: "Prices move a lot in both directions. Only save money you won't need for years." },
   { title: "Small and regular", text: "Saving a fixed small amount every month spreads out your buying price instead of betting on timing." },
   { title: "Don't put everything in one place", text: "Spread risk across assets — and keep most of your savings outside crypto." },
   { title: "Own your keys for the long term", text: "Exchanges can freeze, fail or be hacked. A wallet you control removes that company risk." },
@@ -38,7 +38,7 @@ export function BuyingGuide() {
             <div>
               <p className="font-semibold">{s.title}</p>
               <p className="mt-1 text-sm text-text/90">{s.text}</p>
-              <p className="mt-2 text-sm text-gold">⚠ {s.scam}</p>
+              <p className="mt-2 text-sm text-gold">⚠ {s.warning}</p>
             </div>
           </li>
         ))}

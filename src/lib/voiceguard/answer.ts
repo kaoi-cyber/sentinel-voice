@@ -18,7 +18,7 @@ const ADVICE_PATTERNS = [
   /\bwhat (coin|token|crypto)s? should\b/,
   /\bwhich (coin|token|crypto)s?\b.*\b(buy|invest)\b/,
   /\b(best|top) (coin|token|crypto|investment)s?\b/,
-  /\b(price prediction|predict|will .* (go up|go down|moon|pump|crash))\b/,
+  /\b(price prediction|predict|will .* (go up|go down|moon|pump))\b/,
   /\bguaranteed?\b/,
   /\bget rich\b/,
 ];
@@ -71,7 +71,7 @@ export function answerQuestion(text: string): GuideReply {
         "I'm not able to tell you what to buy or sell, or predict prices — nobody can do that reliably, and anyone who promises returns is a red flag.",
         "What I can do is help you understand how things work, so you can make your own informed decisions.",
       ],
-      followUps: ["long-term", "volatility", "common-scams"],
+      followUps: ["long-term", "volatility", "common-fraud"],
     };
   }
 
@@ -89,7 +89,7 @@ export function answerQuestion(text: string): GuideReply {
       "I'm still learning, and I only answer questions I've been carefully prepared for — I'd rather say “I don't know” than guess about your money.",
       "Here are some things I can help with:",
     ],
-    followUps: ["what-is-crypto", "what-is-approval", "common-scams"],
+    followUps: ["what-is-crypto", "what-is-approval", "common-fraud"],
   };
 }
 
@@ -106,7 +106,7 @@ export function explainReport(report: SecurityReport): GuideReply {
         .map((f) => explainFinding(f, report)),
       `What to do: ${report.recommended_action}`,
     ],
-    followUps: report.decoded.kind === "approve" ? ["what-is-approval", "revoke-approval"] : ["common-scams"],
+    followUps: report.decoded.kind === "approve" ? ["what-is-approval", "revoke-approval"] : ["common-fraud"],
   };
 }
 

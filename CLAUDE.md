@@ -53,7 +53,8 @@ Next.js 15 (App Router, `src/`), TypeScript, Tailwind v4 (theme tokens in `src/a
 
 ## Product
 - One shared deterministic security engine; AI only *explains* its findings, never invents verdicts.
-- Layer 1 **VoiceGuard AI** (`/learn`): beginner education — crypto, wallets, volatility, tokenomics, scams; voice.
+- Layer 1 **VoiceGuard AI** (`/learn`): beginner education — crypto, wallets, volatility, tokenomics, fraud awareness; voice.
+- Wording rules (from the user): describe deceptive schemes only as fraud, tricks or fakes, and never show crypto price falls or crash figures anywhere (app, docs, deck, video).
 - Layer 2 **Sentinel AI** (`/security`) + expert dashboard (`/expert`): transaction/approval checks, rule IDs, evidence, report hash on Avalanche Fuji.
 - Demo scenarios: ordinary transfer, unlimited token approval, unknown spender. Label mocks as samples.
 - Never give investment advice or promise profits.

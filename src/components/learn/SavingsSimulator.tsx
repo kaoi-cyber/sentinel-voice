@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { TriangleAlert } from "lucide-react";
-import { getCoin, money, monthLabel, simulateDca } from "@/lib/markets/stats";
+import { getCoin, money, simulateDca } from "@/lib/markets/stats";
 import { compactUsd, LineChart } from "./LineChart";
 import { CoinTabs, Tile } from "./MarketHistory";
 
@@ -46,23 +45,10 @@ export function SavingsSimulator() {
         </div>
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <Tile label="You put in" value={money(r.invested)} note={`${r.points.length} monthly buys`} />
         <Tile label="Worth at the end" value={money(r.value)} note={`${gain >= 0 ? "+" : ""}${Math.round(gain)}% vs. what you put in`} />
-        <Tile label="Biggest fall along the way" value={`${Math.round(r.maxDrawdownPercent)}%`} note="from the savings' previous high" tone="down" />
       </div>
-
-      {r.worst && (
-        <p className="mt-4 flex gap-2 rounded-xl border border-gold/40 bg-gold/10 p-3 text-sm">
-          <TriangleAlert size={18} className="shrink-0 text-gold" />
-          <span>
-            <span className="font-semibold text-gold">The hard part: </span>
-            in {monthLabel(r.worst.month)} you&apos;d have put in {money(r.worst.invested)} but your savings were worth {money(r.worst.value)} —{" "}
-            {Math.round(r.worst.lossPercent)}%. People who panic-sell at moments like this lock in the loss. Only save what you could leave
-            untouched for years.
-          </span>
-        </p>
-      )}
 
       <div className="mt-5 rounded-2xl border border-line bg-ink/40 p-3 sm:p-4">
         <LineChart

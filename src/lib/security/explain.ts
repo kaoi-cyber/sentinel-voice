@@ -52,13 +52,13 @@ export function explainFinding(f: Finding, r: SecurityReport): string {
     case "KNOWN_SPENDER":
       return `The app asking for permission matches "${who}" in our demo reputation list.`;
     case "UNKNOWN_SPENDER":
-      return "We don't recognise the address asking for permission. That doesn't mean it's a scam — it means we can't vouch for it. Free-airdrop sites are a common trick to get approvals.";
+      return "We don't recognise the address asking for permission. That doesn't mean it's fraudulent — it means we can't vouch for it. Free-airdrop sites are a common trick to get approvals.";
     case "TRANSFER_AMOUNT":
       return `You're sending ${amount ?? "some"} ${sym}. Crypto transfers can't be reversed once they're sent.`;
     case "KNOWN_RECIPIENT":
       return `The recipient matches "${who}".`;
     case "UNKNOWN_RECIPIENT":
-      return "We don't recognise who you're sending to. Scammers use addresses that look almost identical — check every character.";
+      return "We don't recognise who you're sending to. Fraudsters use addresses that look almost identical — check every character.";
     case "KNOWN_TOKEN":
       return `This is ${r.token?.name ?? sym}, a token we recognise.`;
     case "UNKNOWN_TOKEN":

@@ -5,7 +5,6 @@ import { COINS, coinStats, getCoin, money, monthLabel, PRICE_SOURCE } from "@/li
 import { compactUsd, LineChart } from "./LineChart";
 
 const BLUE = "#3987e5";
-const ORANGE = "#d95926";
 
 export function CoinTabs({ value, onChange }: { value: string; onChange: (s: string) => void }) {
   return (
@@ -33,7 +32,6 @@ export function MarketHistory() {
   const coin = getCoin(symbol);
   const s = useMemo(() => coinStats(coin.months), [coin]);
   const idx = (m: string) => coin.months.findIndex((x) => x.month === m);
-  const maxAbs = Math.max(...s.yearly.map((y) => Math.abs(y.percent)));
 
   return (
     <div>
@@ -45,10 +43,9 @@ export function MarketHistory() {
         </label>
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-4">
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <Tile label={`Since ${monthLabel(s.first.month)}`} value={`${s.changePercent >= 0 ? "+" : ""}${Math.round(s.changePercent).toLocaleString("en-US")}%`} note={`${money(s.first.close)} → ${money(s.last.close)}`} />
-        <Tile label="Worst fall from a high" value={`${Math.round(s.maxDrawdown.percent)}%`} note={`${monthLabel(s.maxDrawdown.peak.month)} → ${monthLabel(s.maxDrawdown.trough.month)}`} tone="down" />
-        <Tile label="Months that ended lower" value={`${Math.round(s.downMonthsPercent)}%`} note="of all months on record" />
+        <Tile label="Years of history" value={s.years.toFixed(1)} note={`${coin.months.length} month-end prices`} />
         <Tile label="Highest month-end" value={money(s.ath.close)} note={monthLabel(s.ath.month)} />
       </div>
 
@@ -61,56 +58,23 @@ export function MarketHistory() {
           ariaLabel={`${coin.name} monthly closing price since ${s.first.month}`}
           markers={[
             { index: idx(s.ath.month), label: "Highest", tone: "up" },
-            { index: idx(s.maxDrawdown.trough.month), label: `${Math.round(s.maxDrawdown.percent)}% low`, tone: "down" },
           ]}
         />
       </div>
 
-      <h3 className="mt-6 text-sm font-semibold uppercase tracking-[0.15em] text-muted">Year by year</h3>
-      <table className="mt-2 w-full text-sm">
-        <caption className="sr-only">{coin.name} calendar-year price change</caption>
-        <tbody>
-          {s.yearly.map((y) => (
-            <tr key={y.year} className="border-t border-line/40">
-              <td className="w-16 py-1.5 font-mono text-muted">
-                {y.year}
-                {y.partial && "*"}
-              </td>
-              <td className="py-1.5">
-                <div className="relative h-4">
-                  <div className="absolute left-1/2 top-0 h-full w-px bg-line" />
-                  <div
-                    className="absolute top-0.5 h-3 rounded"
-                    style={{
-                      background: y.percent >= 0 ? BLUE : ORANGE,
-                      width: `${(Math.abs(y.percent) / maxAbs) * 50}%`,
-                      left: y.percent >= 0 ? "50%" : `${50 - (Math.abs(y.percent) / maxAbs) * 50}%`,
-                    }}
-                    title={`${y.year}: ${y.percent.toFixed(0)}%`}
-                  />
-                </div>
-              </td>
-              <td className="w-24 py-1.5 text-right font-mono text-text">
-                {y.percent >= 0 ? "▲ +" : "▼ "}
-                {Math.round(y.percent).toLocaleString("en-US")}%
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
       <p className="mt-3 text-xs text-muted">
-        * partial year. Source: {PRICE_SOURCE.source}, fetched {new Date(PRICE_SOURCE.fetched_at).toLocaleDateString("en-US", { dateStyle: "medium", timeZone: "UTC" })}. {PRICE_SOURCE.note} Month-end
-        prices hide even deeper drops inside the month. Past performance tells you how bumpy the ride has been — not where it goes next.
+        Source: {PRICE_SOURCE.source}, fetched {new Date(PRICE_SOURCE.fetched_at).toLocaleDateString("en-US", { dateStyle: "medium", timeZone: "UTC" })}. {PRICE_SOURCE.note} Prices move in
+        both directions; past performance does not tell you where they go next.
       </p>
     </div>
   );
 }
 
-export function Tile({ label, value, note, tone }: { label: string; value: string; note: string; tone?: "down" }) {
+export function Tile({ label, value, note }: { label: string; value: string; note: string }) {
   return (
     <div className="rounded-2xl border border-line bg-ink/40 p-4">
       <p className="text-xs text-muted">{label}</p>
-      <p className={`mt-1 text-2xl font-extrabold ${tone === "down" ? "text-danger" : "text-text"}`}>{value}</p>
+      <p className="mt-1 text-2xl font-extrabold text-text">{value}</p>
       <p className="mt-0.5 text-xs text-muted">{note}</p>
     </div>
   );

@@ -26,7 +26,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     keywords: ["buy", "buy crypto", "how to buy", "purchase", "get started", "start investing", "first crypto"],
     paragraphs: [
       "Start with a regulated exchange in your country, verify your identity, and turn on app-based two-factor authentication. Then buy a small amount first to learn how it works.",
-      "For long-term savings, many people move their crypto to a wallet they control. The Start safely page walks you through every step, with the scam to watch for at each one.",
+      "For long-term savings, many people move their crypto to a wallet they control. The Start safely page walks you through every step, with the trick to watch for at each one.",
     ],
     bullets: ["Type the exchange address yourself — never click links from ads or DMs", "Only use money you could afford to lose"],
     followUps: ["choose-platform", "what-is-wallet", "regular-saving"],
@@ -41,7 +41,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
       "Look for a licence from your country's financial regulator, regular proof-of-reserves, strong account security, a long clean track record, and easy withdrawals to your own wallet.",
     ],
     bullets: ["Be wary of platforms promising high fixed interest", "Real support never DMs you first or asks for your seed phrase"],
-    followUps: ["how-to-buy", "common-scams", "seed-phrase"],
+    followUps: ["how-to-buy", "common-fraud", "seed-phrase"],
   },
   {
     id: "stablecoins",
@@ -52,7 +52,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
       "Stablecoins aim to stay worth one dollar, but they're not bank accounts. They aren't government-insured, and some have lost their peg in the past.",
       "Be very careful with platforms offering high 'interest' on stablecoins — high yield always means high risk.",
     ],
-    followUps: ["choose-platform", "regular-saving", "common-scams"],
+    followUps: ["choose-platform", "regular-saving", "common-fraud"],
   },
   {
     id: "regular-saving",
@@ -61,7 +61,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     keywords: ["save", "savings", "saving", "build savings", "monthly", "regularly", "secure way", "safely invest"],
     paragraphs: [
       "Many careful savers keep an emergency fund in ordinary savings first, then put a small fixed amount into crypto each month instead of trying to time the market.",
-      "History shows crypto can fall 75 to 95 percent, so only save what you could leave untouched for years — and keep most of your savings outside crypto. The savings simulator on the Start safely page shows both the gains and the scary dips.",
+      "Prices move a lot in both directions, so only save what you could leave untouched for years — and keep most of your savings outside crypto. The savings simulator on the Start safely page shows how regular saving has worked over time.",
     ],
     followUps: ["long-term", "volatility", "stablecoins"],
   },
@@ -143,14 +143,14 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     keywords: ["seed phrase", "recovery phrase", "secret phrase", "private key", "12 words", "24 words", "mnemonic"],
     paragraphs: [
       "Your seed phrase — usually 12 or 24 words — is the master key to your wallet. Anyone who has it can take everything, from anywhere in the world.",
-      "No real company, support agent or app will ever ask for it. If someone does, it's a scam.",
+      "No real company, support agent or app will ever ask for it. If someone does, it's fraud.",
     ],
     bullets: [
       "Write it on paper and store it somewhere safe and private",
       "Never type it into a website, chat or form",
       "Never take a screenshot or store it in the cloud",
     ],
-    followUps: ["common-scams", "what-is-wallet"],
+    followUps: ["common-fraud", "what-is-wallet"],
   },
 
   // ── Security ────────────────────────────────────────────────────────────
@@ -172,9 +172,9 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     keywords: ["unlimited", "unlimited approval", "infinite approval", "max approval", "unlimited allowance"],
     paragraphs: [
       "With an unlimited approval, the app can move all of that token from your wallet — today, or any time in the future — without asking again.",
-      "If the app is ever hacked, or was a scam all along, your whole balance of that token could be taken. A safer habit is to approve only the amount you need right now.",
+      "If the app is ever hacked, or was fraudulent all along, your whole balance of that token could be taken. A safer habit is to approve only the amount you need right now.",
     ],
-    followUps: ["revoke-approval", "airdrop-scam", "what-is-approval"],
+    followUps: ["revoke-approval", "airdrop-safety", "what-is-approval"],
   },
   {
     id: "revoke-approval",
@@ -188,11 +188,11 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     followUps: ["unlimited-approval", "gas-fees"],
   },
   {
-    id: "common-scams",
+    id: "common-fraud",
     topic: "Security",
-    question: "What are the most common crypto scams?",
-    keywords: ["scam", "scams", "fraud", "phishing", "rug pull", "fake", "hack", "stolen"],
-    paragraphs: ["Most crypto scams don't break the technology — they trick people into handing over access."],
+    question: "What are the most common crypto tricks to avoid?",
+    keywords: ["fraud", "phishing", "rug pull", "fake", "hack", "stolen", "trick", "tricks", "avoid"],
+    paragraphs: ["Most crypto fraud doesn't break the technology — it tricks people into handing over access."],
     bullets: [
       "Fake airdrops or giveaways that ask you to connect your wallet and approve tokens",
       "Look-alike websites and links that copy real apps",
@@ -200,18 +200,18 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
       "Anyone promising guaranteed or very high returns",
       "Online friends or romantic contacts who steer you toward an investment platform",
     ],
-    followUps: ["airdrop-scam", "seed-phrase", "unlimited-approval"],
+    followUps: ["airdrop-safety", "seed-phrase", "unlimited-approval"],
   },
   {
-    id: "airdrop-scam",
+    id: "airdrop-safety",
     topic: "Security",
     question: "Is a free airdrop safe to claim?",
-    keywords: ["airdrop", "scam", "airdrop scam", "fake airdrop", "free tokens", "giveaway", "claim", "free crypto", "reward"],
+    keywords: ["airdrop", "fake", "fake airdrop", "free tokens", "giveaway", "claim", "free crypto", "reward"],
     paragraphs: [
-      "Some airdrops are real, but “claim your free tokens” is also one of the most common traps. The scam site asks you to approve your tokens, then drains them.",
+      "Some airdrops are real, but “claim your free tokens” is also one of the most common traps. The fake site asks you to approve your tokens, then drains them.",
       "Only use links from a project's official website or verified accounts, and be very wary if claiming something free asks for an approval. That's exactly what Sentinel checks for.",
     ],
-    followUps: ["unlimited-approval", "how-sentinel-works", "common-scams"],
+    followUps: ["unlimited-approval", "how-sentinel-works", "common-fraud"],
   },
   {
     id: "how-sentinel-works",
@@ -230,10 +230,10 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
     id: "volatility",
     topic: "Investing",
     question: "Why do crypto prices move so much?",
-    keywords: ["volatility", "volatile", "price", "prices", "crash", "drop", "pump", "go up", "go down"],
+    keywords: ["volatility", "volatile", "price", "prices", "pump", "go up", "go down", "swing"],
     paragraphs: [
-      "Crypto prices can rise or fall by large amounts in days or even hours. Markets are young, trade 24/7, and are driven heavily by news, sentiment and speculation.",
-      "Smaller tokens tend to swing even more than Bitcoin. A big rise is no guarantee of more to come — and a big fall can keep going.",
+      "Crypto prices can move by large amounts in days or even hours. Markets are young, trade 24/7, and are driven heavily by news, sentiment and speculation.",
+      "Smaller tokens tend to swing even more than Bitcoin. Past moves are no guarantee of what comes next.",
     ],
     followUps: ["long-term", "tokenomics"],
   },
@@ -246,7 +246,7 @@ export const KNOWLEDGE: KnowledgeEntry[] = [
       "Long-term investing means holding an asset for years rather than trading it day to day. Some people buy a fixed amount on a regular schedule — called dollar-cost averaging — so they don't have to time the market.",
       "Crypto is high-risk. A common principle is to only put in what you could afford to lose entirely, and to understand what you're buying first. I can explain concepts, but I can't tell you what to buy.",
     ],
-    followUps: ["volatility", "tokenomics", "common-scams"],
+    followUps: ["volatility", "tokenomics", "common-fraud"],
   },
 
   // ── Tokenomics ──────────────────────────────────────────────────────────

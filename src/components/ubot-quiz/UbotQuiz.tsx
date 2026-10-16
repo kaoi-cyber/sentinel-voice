@@ -55,7 +55,7 @@ const QUESTIONS: { q: string; answers: string[]; correct: number; explanation: s
       "A faster route"
     ],
     correct: 0,
-    explanation: "Scammers plant look-alike addresses hoping you copy the wrong one."
+    explanation: "Attackers plant look-alike addresses hoping you copy the wrong one."
   },
   {
     q: "Best place to type an exchange's website?",
@@ -78,14 +78,14 @@ const QUESTIONS: { q: string; answers: string[]; correct: number; explanation: s
     explanation: "SIM-swap attacks can steal SMS codes."
   },
   {
-    q: "Bitcoin fell about 75% from its 2017 high. What does that teach?",
+    q: "Someone tells you a token “can only go up”. What's the safest mindset?",
     answers: [
-      "Crypto can drop sharply; only invest what you can leave untouched",
-      "Prices only go up",
-      "It means it's a scam"
+      "Prices move both ways; only invest what you can leave untouched",
+      "Buy as much as possible right now",
+      "Borrow money to buy more"
     ],
     correct: 0,
-    explanation: "Big drops have happened many times."
+    explanation: "Nobody can guarantee where a price goes next."
   },
   {
     q: "A platform promises a guaranteed 20% monthly return. This is…",
@@ -95,7 +95,7 @@ const QUESTIONS: { q: string; answers: string[]; correct: number; explanation: s
       "Normal for crypto"
     ],
     correct: 0,
-    explanation: "Guaranteed high returns are a classic scam sign."
+    explanation: "Guaranteed high returns are a classic warning sign of fraud."
   },
   {
     q: "Before signing any wallet request you don't understand, you should…",

@@ -10,6 +10,7 @@ import { buildAuditReport, RESULT_LABEL, type Gap, type WalletAuditReport, type 
 import { TEST_PACK, type TestCase } from "@/lib/audit/testpack";
 import { hashReport } from "@/lib/security/hash";
 import { sendTestRequest, type TestOutcome } from "@/lib/avalanche/wallet";
+import { STATIC_DEMO } from "@/lib/staticDemo";
 import { DEMO_WALLET } from "@/lib/security/reputation";
 
 const ATTACK_OPTIONS: WalletResult[] = ["blocked", "clear_warning", "weak_warning", "no_warning", "not_tested"];
@@ -266,6 +267,12 @@ function TestCard({ t, value, onChange }: { t: TestCase; value: WalletResult; on
           </button>
         </div>
       </details>
+      {STATIC_DEMO ? (
+        <p className="mt-4 text-xs text-muted">
+          Sending live test requests to a wallet is available only in the locally run app — a public website that sends drainer-style
+          requests is rightly flagged by wallet security tools.
+        </p>
+      ) : (
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button
           type="button"
@@ -278,6 +285,7 @@ function TestCard({ t, value, onChange }: { t: TestCase; value: WalletResult; on
         </button>
         <span className="text-xs text-gold">{isAttack ? "Look at the warning, then click Reject. Never approve or sign." : "Legitimate request — note whether your wallet raised a false alarm, then Reject."}</span>
       </div>
+      )}
       {live && (
         <p className={`mt-2 text-xs ${live.outcome === "rejected" ? "text-safe" : live.outcome === "signed" ? "text-danger" : "text-muted"}`}>
           {live.outcome === "rejected" ? "✓ " : live.outcome === "signed" ? "⚠ " : ""}
