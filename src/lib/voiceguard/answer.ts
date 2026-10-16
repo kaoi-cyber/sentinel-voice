@@ -40,6 +40,16 @@ function score(entry: KnowledgeEntry, q: string, words: Set<string>): number {
   return s;
 }
 
+export const GREETING: GuideReply = {
+  kind: "knowledge",
+  title: "Hey, I'm VoiceGuard.",
+  paragraphs: [
+    "New to crypto? Don't worry, I've got you. Ask me a question, pick a topic, or ask me to explain one of Sentinel's security checks.",
+    "I teach how things work — I won't tell you what to buy.",
+  ],
+  followUps: ["what-is-crypto", "what-is-wallet", "what-is-approval"],
+};
+
 export function fromEntry(entry: KnowledgeEntry): GuideReply {
   return {
     kind: "knowledge",

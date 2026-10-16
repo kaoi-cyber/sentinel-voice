@@ -6,7 +6,7 @@ import { Loader2, Mic, ScanSearch, SendHorizontal, ShieldCheck, Square } from "l
 import { LogoMark } from "@/components/Logo";
 import { analyze } from "@/lib/security/engine";
 import { getScenario, SCENARIOS } from "@/lib/security/scenarios";
-import { answerQuestion, explainReport, followUpQuestion, fromEntry, type GuideReply } from "@/lib/voiceguard/answer";
+import { answerQuestion, explainReport, followUpQuestion, fromEntry, GREETING, type GuideReply } from "@/lib/voiceguard/answer";
 import { getEntry, KNOWLEDGE, TOPICS } from "@/lib/voiceguard/knowledge";
 import { ListenButton, VoiceEngineTag } from "@/components/voice/ListenButton";
 import { player } from "@/lib/voice/player";
@@ -15,15 +15,6 @@ import { useVoiceInput } from "@/lib/voice/useVoiceInput";
 
 type Message = { id: number; role: "user"; text: string; voice?: boolean } | { id: number; role: "guide"; reply: GuideReply };
 
-const GREETING: GuideReply = {
-  kind: "knowledge",
-  title: "Hey, I'm VoiceGuard.",
-  paragraphs: [
-    "New to crypto? Don't worry, I've got you. Ask me a question, pick a topic, or ask me to explain one of Sentinel's security checks.",
-    "I teach how things work — I won't tell you what to buy.",
-  ],
-  followUps: ["what-is-crypto", "what-is-wallet", "what-is-approval"],
-};
 
 function scenarioMessages(id: string | null): Message[] {
   const scenario = getScenario(id);

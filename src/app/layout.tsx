@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PageBackdrop } from "@/components/PageBackdrop";
+import { DemoEditionBanner } from "@/components/DemoEditionBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} backdrop min-h-screen font-sans antialiased`}
       >
         <Header />
+        <DemoEditionBanner />
         <div className="relative pb-8">
           <PageBackdrop />
           <main className="relative">{children}</main>

@@ -4,7 +4,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
-import { SAMPLES } from "./samples";
+import { SAMPLES, sampleSnapshot } from "./samples";
 import type { AllocationsData, Envelope, TokenListItem, TokenomistSnapshot, UnlockEvent } from "./types";
 
 const API = "https://api.tokenomist.ai";
@@ -74,20 +74,6 @@ export async function liveAccess(): Promise<{ live: boolean; reason: string | nu
   return result;
 }
 
-function sampleSnapshot(tokenId: string, reason: string, now: Date): TokenomistSnapshot | null {
-  const s = SAMPLES[tokenId];
-  if (!s) return null;
-  return {
-    tokenId,
-    mode: "sample",
-    sampleReason: reason,
-    queryDate: now.toISOString(),
-    token: s.token,
-    allocations: s.allocations,
-    unlockEvents: s.unlockEvents(now),
-    endpoints: ["sample data (fictional token)"],
-  };
-}
 
 /**
  * Fetches everything Sentinel needs for one token.

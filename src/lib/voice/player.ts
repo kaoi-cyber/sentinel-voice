@@ -4,6 +4,8 @@
 // Tries ElevenLabs first; if that's unavailable, falls back to the browser's built-in voice.
 import { useSyncExternalStore } from "react";
 import { elevenLabsAvailable } from "./status";
+import { STATIC_DEMO } from "@/lib/staticDemo";
+import { packedVoiceUrl } from "./voicePack";
 
 export type VoiceEngine = "elevenlabs" | "browser";
 
@@ -61,18 +63,26 @@ export const player = {
     const myToken = ++token;
     set({ playingKey: key, loading: true });
     try {
-      if (!(await elevenLabsAvailable())) throw new Error("ElevenLabs API key is not set");
-      if (myToken !== token) return;
-      const res = await fetch("/api/voice/speak", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-      if (!res.ok) throw new Error((await res.json().catch(() => null))?.error ?? `HTTP ${res.status}`);
-      const blob = await res.blob();
-      if (myToken !== token) return;
-      objectUrl = URL.createObjectURL(blob);
-      audio = new Audio(objectUrl);
+      if (STATIC_DEMO) {
+        // GitHub Pages edition: ElevenLabs audio generated ahead of time for every prepared line.
+        const url = await packedVoiceUrl(text);
+        if (!url) throw new Error("This line has no pre-generated ElevenLabs audio on the demo site");
+        if (myToken !== token) return;
+        audio = new Audio(url);
+      } else {
+        if (!(await elevenLabsAvailable())) throw new Error("ElevenLabs API key is not set");
+        if (myToken !== token) return;
+        const res = await fetch("/api/voice/speak", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        if (!res.ok) throw new Error((await res.json().catch(() => null))?.error ?? `HTTP ${res.status}`);
+        const blob = await res.blob();
+        if (myToken !== token) return;
+        objectUrl = URL.createObjectURL(blob);
+        audio = new Audio(objectUrl);
+      }
       audio.onended = () => myToken === token && set({ playingKey: null, loading: false });
       await audio.play();
       set({ loading: false, engine: "elevenlabs", fallbackReason: null });

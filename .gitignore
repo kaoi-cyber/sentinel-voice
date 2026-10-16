@@ -46,3 +46,6 @@ next-env.d.ts
 
 # cached Tokenomist API responses
 .tokenomist-cache/
+
+# GitHub Pages edition build
+/.next-static/

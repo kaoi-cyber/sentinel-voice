@@ -1,7 +1,7 @@
 // FICTIONAL sample tokens in Tokenomist's exact response format, used when live
 // API access isn't available. They are not real projects and the UI always labels them.
 // Dates are relative to "now" so the demo stays meaningful on any day.
-import type { AllocationsData, TokenListItem, UnlockEvent } from "./types";
+import type { AllocationsData, TokenListItem, TokenomistSnapshot, UnlockEvent } from "./types";
 
 type Sample = { token: TokenListItem; allocations: AllocationsData; unlockEvents: (now: Date) => UnlockEvent[] };
 
@@ -131,3 +131,18 @@ export const SAMPLES: Record<string, Sample> = {
     ],
   },
 };
+
+export function sampleSnapshot(tokenId: string, reason: string, now: Date): TokenomistSnapshot | null {
+  const s = SAMPLES[tokenId];
+  if (!s) return null;
+  return {
+    tokenId,
+    mode: "sample",
+    sampleReason: reason,
+    queryDate: now.toISOString(),
+    token: s.token,
+    allocations: s.allocations,
+    unlockEvents: s.unlockEvents(now),
+    endpoints: ["sample data (fictional token)"],
+  };
+}

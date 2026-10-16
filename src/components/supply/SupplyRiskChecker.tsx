@@ -10,6 +10,7 @@ import { hashReport } from "@/lib/security/hash";
 import { explainSupplyFinding, sortSupplyFindings, supplyHeadline, supplySpeech } from "@/lib/supply/explain";
 import type { SupplyReport } from "@/lib/supply/types";
 import { FloatBar, formatAmount, GROUP_COLOR, HolderChart } from "./HolderChart";
+import { supplyReport, supplyStatus } from "@/lib/supply/clientApi";
 
 type Status = { live: boolean; reason: string | null; samples: string[]; suggestions: string[] };
 
@@ -26,8 +27,7 @@ export function SupplyRiskChecker() {
   const [report, setReport] = useState<SupplyReport | null>(null);
 
   useEffect(() => {
-    fetch("/api/supply/status")
-      .then((r) => r.json())
+    supplyStatus()
       .then(setStatus)
       .catch(() => setStatus({ live: false, reason: "Couldn't reach the server", samples: Object.keys(SAMPLE_LABEL), suggestions: [] }));
   }, []);
@@ -46,10 +46,7 @@ export function SupplyRiskChecker() {
     setError(null);
     setReport(null);
     try {
-      const res = await fetch(`/api/supply?token=${encodeURIComponent(id.trim())}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? `HTTP ${res.status}`);
-      setReport(data.report);
+      setReport(await supplyReport(id));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {

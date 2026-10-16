@@ -12,9 +12,21 @@ The rules decide; the AI only explains. Every finding shows its rule, value and 
 
 ## Demo
 
+**Live demo:** https://kaoi-cyber.github.io/sentinel-voice/ (static edition on GitHub Pages)
+
 ![Sentinel Voice demo walkthrough](docs/demo/demo.gif)
 
 52-second walkthrough of every feature: [watch the MP4](docs/demo/sentinel-voice-demo.mp4) (silent — VoiceGuard's ElevenLabs voice plays live in the app).
+
+### Online demo vs. the full app
+
+| | Online demo (GitHub Pages) | Full app (`npm run dev`) |
+| --- | --- | --- |
+| VoiceGuard voice answers | ElevenLabs audio, pre-generated for all 34 prepared lines | ElevenLabs live for any text |
+| Asking by microphone | Browser speech recognition (Chrome) | ElevenLabs Scribe v2 |
+| Token supply risk | Sample tokens | Live Tokenomist data once API access is enabled |
+| Avalanche record + verify | Yes (your wallet; reads Fuji directly) | Yes |
+| Everything else | Same | Same |
 
 ## Run it
 

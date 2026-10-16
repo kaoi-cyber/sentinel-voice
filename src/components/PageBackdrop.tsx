@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { asset } from "@/lib/staticDemo";
 
 // One atmospheric image per section of the app. On desktop it sits on the right and fades into
 // the navy page; on phones it sits behind the text under a darker wash so copy stays readable.
@@ -20,7 +21,7 @@ export function PageBackdrop() {
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[min(760px,100%)] overflow-hidden">
       <div className="absolute inset-y-0 right-0 w-full md:w-[62%] [mask-image:linear-gradient(to_bottom,black_55%,transparent)] md:[mask-image:linear-gradient(to_left,black_45%,transparent),linear-gradient(to_bottom,black_55%,transparent)] md:[mask-composite:intersect]">
-        <Image key={src} src={src} alt="" fill priority sizes="(min-width: 768px) 62vw, 100vw" className="object-cover object-center opacity-50 md:opacity-70" />
+        <Image key={src} src={asset(src)} alt="" fill priority sizes="(min-width: 768px) 62vw, 100vw" className="object-cover object-center opacity-50 md:opacity-70" />
         {/* Palette wash: pulls every photo toward navy + violet so the brand colours stay in charge. */}
         <div className="absolute inset-0 bg-gradient-to-br from-violet/25 via-ink/40 to-blue/20 mix-blend-multiply" />
       </div>

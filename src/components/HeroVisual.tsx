@@ -6,9 +6,8 @@ import { VoiceEngineTag } from "./voice/ListenButton";
 
 const BARS = [0.5, 0.8, 1, 0.7, 0.9, 0.6, 1, 0.75, 0.55];
 
-export const GREETING_ID = "hero-greeting";
-export const GREETING_TEXT =
-  "Hey, new here? Don't worry, I've got you. Understand crypto, explore your future, and protect every step.";
+import { GREETING_ID, GREETING_TEXT } from "@/lib/voice/greeting";
+export { GREETING_ID, GREETING_TEXT };
 
 /** Pulsing shield with a "voice" waveform. Tap it and VoiceGuard says hello (ElevenLabs). */
 export function HeroVisual() {
