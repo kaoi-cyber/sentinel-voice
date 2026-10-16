@@ -7,7 +7,7 @@ import { VerifyReport } from "@/components/avalanche/VerifyReport";
 import { CONTROLS, type ControlAnswer } from "@/lib/audit/controls";
 import { detect } from "@/lib/audit/detect";
 import { buildAuditReport, RESULT_LABEL, type Gap, type WalletAuditReport, type WalletResult } from "@/lib/audit/report";
-import { TEST_PACK, type TestCase } from "@/lib/audit/testpack";
+import { PAYLOADS_HIDDEN, TEST_PACK, type TestCase } from "@/lib/audit/testpack";
 import { hashReport } from "@/lib/security/hash";
 import { sendTestRequest, type TestOutcome } from "@/lib/avalanche/wallet";
 import { STATIC_DEMO } from "@/lib/staticDemo";
@@ -214,8 +214,8 @@ function TestCard({ t, value, onChange }: { t: TestCase; value: WalletResult; on
       setSending(false);
     }
   }
-  const sentinel = detect(t.request, t.recentAddresses);
-  const payload = JSON.stringify(toRpc(t), null, 2);
+  const sentinel = PAYLOADS_HIDDEN ? { flagged: t.kind === "attack" } : detect(t.request, t.recentAddresses);
+  const payload = PAYLOADS_HIDDEN ? "" : JSON.stringify(toRpc(t), null, 2);
   const isAttack = t.kind === "attack";
 
   return (
@@ -249,6 +249,9 @@ function TestCard({ t, value, onChange }: { t: TestCase; value: WalletResult; on
           <span className="text-muted">{t.walletShould}</span>
         </p>
       </div>
+      {PAYLOADS_HIDDEN ? (
+        <p className="mt-3 text-xs text-muted">The exact test payload is included only in the locally run app.</p>
+      ) : (
       <details className="mt-3">
         <summary className="cursor-pointer text-xs font-semibold text-violet">Test payload</summary>
         <div className="relative mt-2">
@@ -267,6 +270,7 @@ function TestCard({ t, value, onChange }: { t: TestCase; value: WalletResult; on
           </button>
         </div>
       </details>
+      )}
       {STATIC_DEMO ? (
         <p className="mt-4 text-xs text-muted">
           Sending live test requests to a wallet is available only in the locally run app — a public website that sends drainer-style

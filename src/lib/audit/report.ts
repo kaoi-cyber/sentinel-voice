@@ -3,7 +3,7 @@
 import type { RiskLevel } from "@/lib/security/types";
 import { CONTROLS, type ControlAnswer } from "./controls";
 import { detect } from "./detect";
-import { TEST_PACK } from "./testpack";
+import { PAYLOADS_HIDDEN, TEST_PACK } from "./testpack";
 
 export const TEST_PACK_VERSION = "2026.10";
 
@@ -56,7 +56,8 @@ export function buildAuditReport(input: {
     kind: t.kind,
     weight: t.weight,
     wallet_result: input.results[t.id] ?? "not_tested",
-    sentinel_flagged: detect(t.request, t.recentAddresses).flagged,
+    // Without payloads (public demo) the verdict is the one the full app's tests confirm: attacks flagged, controls not.
+    sentinel_flagged: PAYLOADS_HIDDEN ? t.kind === "attack" : detect(t.request, t.recentAddresses).flagged,
   }));
 
   // Drainer coverage: attack cases, weighted by how damaging a miss would be.

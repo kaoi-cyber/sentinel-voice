@@ -25,6 +25,13 @@ export type TestCase = {
   recentAddresses?: string[];
 };
 
+// On the public GitHub Pages edition the drainer payloads are left out of the site's code
+// entirely (wallet security scanners rightly flag sites that carry them); the locally run app
+// keeps the full test pack. Inline env check so the build drops the unused branch.
+const HIDE = process.env.NEXT_PUBLIC_STATIC_DEMO === "1";
+export const PAYLOADS_HIDDEN = HIDE;
+const HIDDEN: SigningRequest = { method: "personal_sign", message: "" };
+
 // Uniswap's canonical Permit2 contract address (same on every EVM chain).
 export const PERMIT2 = "0x000000000022d473030f116ddee9f6b43ac78ba3";
 const DRAINER = KNOWN.unknownSpender;
@@ -48,7 +55,7 @@ export const TEST_PACK: TestCase[] = [
     technique: "approve(spender, 2^256−1)",
     howItDrains: "The spender can move the user's entire token balance at any time, long after the site is closed.",
     walletShould: "Show the spender and an unmistakable 'unlimited' warning, and offer to set a spending cap.",
-    request: tx(encodeCall("approve", DRAINER, MAX_UINT256)),
+    request: HIDE ? HIDDEN : tx(encodeCall("approve", DRAINER, MAX_UINT256)),
   },
   {
     id: "increase-allowance",
@@ -58,7 +65,7 @@ export const TEST_PACK: TestCase[] = [
     technique: "increaseAllowance(spender, huge amount)",
     howItDrains: "Same effect as an unlimited approve, but through a function some wallets don't decode.",
     walletShould: "Decode increaseAllowance the same way as approve and warn identically.",
-    request: tx(encodeCall("increaseAllowance", DRAINER, MAX_UINT256)),
+    request: HIDE ? HIDDEN : tx(encodeCall("increaseAllowance", DRAINER, MAX_UINT256)),
   },
   {
     id: "nft-approve-all",
@@ -68,7 +75,7 @@ export const TEST_PACK: TestCase[] = [
     technique: "setApprovalForAll(operator, true)",
     howItDrains: "The operator can transfer every NFT the user owns in that collection, including ones bought later.",
     walletShould: "Warn that this grants access to ALL items, name the operator, and flag unknown operators.",
-    request: tx(encodeCall("setApprovalForAll", DRAINER, 1n), NFT_COLLECTION),
+    request: HIDE ? HIDDEN : tx(encodeCall("setApprovalForAll", DRAINER, 1n), NFT_COLLECTION),
   },
   {
     id: "permit-signature",
@@ -78,7 +85,7 @@ export const TEST_PACK: TestCase[] = [
     technique: "eth_signTypedData_v4 · primaryType Permit",
     howItDrains: "A gasless off-chain signature that grants an allowance. No transaction appears, so users think they 'just signed in'.",
     walletShould: "Recognise Permit typed data, show it as a token approval with amount and spender, and warn on large values.",
-    request: {
+    request: HIDE ? HIDDEN : {
       method: "eth_signTypedData_v4",
       typedData: {
         domain: { name: "USD Coin (demo token)", version: "2", chainId: FUJI.chain_id, verifyingContract: KNOWN.usdc },
@@ -104,7 +111,7 @@ export const TEST_PACK: TestCase[] = [
     technique: "eth_signTypedData_v4 · Permit2 PermitSingle",
     howItDrains: "Signs away any token already approved to Permit2 — one signature can empty balances across tokens.",
     walletShould: "Decode Permit2 messages, show token, amount, spender and expiry, and warn on unlimited amounts or far expiries.",
-    request: {
+    request: HIDE ? HIDDEN : {
       method: "eth_signTypedData_v4",
       typedData: {
         domain: { name: "Permit2", chainId: FUJI.chain_id, verifyingContract: PERMIT2 },
@@ -138,7 +145,7 @@ export const TEST_PACK: TestCase[] = [
     technique: "eth_sign(32-byte hash)",
     howItDrains: "The user signs an opaque hash that can be any transaction. Nobody — not even the wallet — can show what it does.",
     walletShould: "Block eth_sign by default, or require an explicit advanced-mode opt-in with a severe warning.",
-    request: { method: "eth_sign", hash: "0x" + "9a".repeat(32) },
+    request: HIDE ? HIDDEN : { method: "eth_sign", hash: "0x" + "9a".repeat(32) },
   },
   {
     id: "address-poisoning",
@@ -148,7 +155,7 @@ export const TEST_PACK: TestCase[] = [
     technique: "transfer() to an address matching the first & last characters of a saved address",
     howItDrains: "Attackers plant look-alike addresses in the user's history; users copy the wrong one and send funds to the attacker.",
     walletShould: "Detect recipients that resemble a saved/recent address but differ, and warn before sending.",
-    request: tx(encodeCall("transfer", POISONED, 1_000_000_000n)),
+    request: HIDE ? HIDDEN : tx(encodeCall("transfer", POISONED, 1_000_000_000n)),
     recentAddresses: [KNOWN.savings],
   },
   {
@@ -159,7 +166,7 @@ export const TEST_PACK: TestCase[] = [
     technique: "transfer() to a known saved address",
     howItDrains: "Legitimate — included to measure false alarms.",
     walletShould: "Proceed normally. Constant warnings on safe actions train users to ignore warnings.",
-    request: tx(encodeCall("transfer", KNOWN.savings, 250_000_000n)),
+    request: HIDE ? HIDDEN : tx(encodeCall("transfer", KNOWN.savings, 250_000_000n)),
     recentAddresses: [KNOWN.savings],
   },
   {
@@ -170,7 +177,7 @@ export const TEST_PACK: TestCase[] = [
     technique: "personal_sign(readable message)",
     howItDrains: "Legitimate — a human-readable sign-in message moves no funds.",
     walletShould: "Show the readable message and proceed without a drain warning.",
-    request: {
+    request: HIDE ? HIDDEN : {
       method: "personal_sign",
       message: "Sign in to Demo DEX\nNonce: 8f3a1c\nThis request will not trigger a blockchain transaction or cost any gas.",
     },
