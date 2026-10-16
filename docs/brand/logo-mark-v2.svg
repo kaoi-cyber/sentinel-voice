@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Sentinel Voice logo">
+  <defs>
+    <linearGradient id="v2-left" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#7aa0ff"/>
+      <stop offset="1" stop-color="#3b5fe0"/>
+    </linearGradient>
+    <linearGradient id="v2-right" x1="1" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#a98bff"/>
+      <stop offset="1" stop-color="#6d43e6"/>
+    </linearGradient>
+    <linearGradient id="v2-inner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#16204a"/>
+      <stop offset="1" stop-color="#060a18"/>
+    </linearGradient>
+    <linearGradient id="v2-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd67a"/>
+      <stop offset="1" stop-color="#e09a1f"/>
+    </linearGradient>
+    <linearGradient id="v2-mic" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#c9d4ff"/>
+    </linearGradient>
+    <filter id="v2-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- faceted outer shield: blue left half, violet right half -->
+  <g filter="url(#v2-glow)">
+    <path d="M256 26 L256 488 C146 448 64 358 64 236 V96 Z" fill="url(#v2-left)"/>
+    <path d="M256 26 L448 96 V236 C448 358 366 448 256 488 Z" fill="url(#v2-right)"/>
+  </g>
+  <!-- light edge on the left facet -->
+  <path d="M256 26 L64 96 V236 C64 300 86 356 124 400" fill="none" stroke="#c7d6ff" stroke-width="5" stroke-opacity="0.7" stroke-linecap="round"/>
+
+  <!-- inner shield -->
+  <path d="M256 66 L410 122 V238 C410 336 345 410 256 446 C167 410 102 336 102 238 V122 Z" fill="url(#v2-inner)"/>
+
+  <!-- blockchain nodes along the top -->
+  <g stroke="#7aa0ff" stroke-width="4" stroke-opacity="0.8" fill="none">
+    <path d="M196 106 L256 92 L316 106"/>
+  </g>
+  <g fill="#edb541">
+    <circle cx="196" cy="106" r="8"/>
+    <circle cx="256" cy="92" r="9"/>
+    <circle cx="316" cy="106" r="8"/>
+  </g>
+
+  <!-- gold equaliser bars (the voice) -->
+  <g fill="url(#v2-gold)">
+    <rect x="128" y="226" width="16" height="48" rx="8"/>
+    <rect x="154" y="200" width="16" height="100" rx="8"/>
+    <rect x="180" y="214" width="16" height="72" rx="8"/>
+    <rect x="316" y="214" width="16" height="72" rx="8"/>
+    <rect x="342" y="200" width="16" height="100" rx="8"/>
+    <rect x="368" y="226" width="16" height="48" rx="8"/>
+  </g>
+
+  <!-- microphone with a keyhole -->
+  <rect x="214" y="138" width="84" height="150" rx="42" fill="url(#v2-mic)"/>
+  <circle cx="256" cy="198" r="15" fill="#0b1230"/>
+  <path d="M248 204 L264 204 L270 246 L242 246 Z" fill="#0b1230"/>
+  <path d="M190 252 C190 306 220 334 256 334 C292 334 322 306 322 252" fill="none" stroke="#e8eeff" stroke-width="16" stroke-linecap="round"/>
+  <path d="M256 334 V376 M224 388 H288" fill="none" stroke="#e8eeff" stroke-width="16" stroke-linecap="round"/>
+</svg>
