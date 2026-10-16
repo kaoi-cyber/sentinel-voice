@@ -25,8 +25,13 @@ The rules decide; the AI only explains. Every finding shows its rule, value and 
 | VoiceGuard voice answers | ElevenLabs audio, pre-generated for all 34 prepared lines | ElevenLabs live for any text |
 | Asking by microphone | Browser speech recognition (Chrome) | ElevenLabs Scribe v2 |
 | Token supply risk | Sample tokens | Live Tokenomist data once API access is enabled |
-| Avalanche record + verify | Yes (your wallet; reads Fuji directly) | Yes |
+| Avalanche verify | Yes (reads Fuji directly) | Yes |
+| Avalanche record | Possible, but some wallets (e.g. Core's security check) warn on this public address because the app demonstrates drainer patterns | Yes — recommended |
+| Wallet audit: send drainer tests to your own wallet | No — payloads are left out of the public build | Yes |
+| Agent Payment Guard | Same decisions, precomputed by the real engine | Live engine |
 | Everything else | Same | Same |
+
+**To test every feature, run the full app locally** (below) and open it in Chrome with the Core or MetaMask extension on Avalanche Fuji. The online demo is for browsing and listening.
 
 ## Run it
 
