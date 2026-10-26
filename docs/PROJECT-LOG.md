@@ -40,3 +40,7 @@ A record of how the project was built during U-Hackathon 2026 (FLOW Summit, Bang
 ## Open items
 - Report the Core/Blockaid false positive for `kaoi-cyber.github.io`.
 - Ask Tokenomist to enable API access; ask U-topia about a U-Pay / U-Bot API; confirm DTV Group's role.
+
+## Full conversation
+- The whole build conversation (15–26 Oct 2026) is the Claude Code session **"Sentinel Voice"**, in the "Sentinel Voice" sidebar group of the Claude desktop app.
+- A private copy is saved at `archive/sentinel-voice-conversation-2026-10-26.zip` (on this computer only; git-ignored, never pushed).

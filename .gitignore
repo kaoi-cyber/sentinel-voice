@@ -49,3 +49,6 @@ next-env.d.ts
 
 # GitHub Pages edition build
 /.next-static/
+
+# Private: exported Claude conversations (never pushed)
+archive/
